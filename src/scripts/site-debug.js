@@ -1,11 +1,24 @@
 import { SITE_CONFIG } from '../config/site.js';
 import { setSiteDebugDate, clearSiteDebugDate } from '../lib/site-debug-time.js';
+import { text } from '../i18n/copy.js';
 
 const panel = document.querySelector('[data-debug-panel]');
 if (panel) {
   const launcher = document.querySelector('[data-debug-launcher]');
   const status = panel.querySelector('[data-debug-status]');
-  const setStatus = (message) => { status.textContent = message; };
+  let statusKey = '';
+  let statusValues = {};
+  let renderStatus = () => '';
+  const language = () => document.documentElement.dataset.language ?? 'zh';
+  const setStatus = (key, values = {}) => {
+    statusKey = key;
+    statusValues = values;
+    renderStatus = () => text(statusKey, language(), statusValues);
+    status.textContent = renderStatus();
+  };
+  document.addEventListener('site:language-change', () => {
+    if (statusKey || renderStatus) status.textContent = renderStatus();
+  });
   const dispatchTime = (value) => document.dispatchEvent(new CustomEvent('site-debug-time-change', { detail: { value } }));
   const collapse = () => {
     panel.hidden = true;
@@ -26,25 +39,25 @@ if (panel) {
   const timeInput = panel.querySelector('[data-debug-datetime]');
   const makeLocalValue = (monthDay) => `${new Date().getFullYear()}-${monthDay}T12:00`;
   panel.querySelector('[data-debug-apply-time]').addEventListener('click', () => {
-    if (!timeInput.value) return setStatus('先选择一个日期和时间。');
+    if (!timeInput.value) return setStatus('status.chooseDate');
     setSiteDebugDate(timeInput.value);
     dispatchTime(timeInput.value);
-    setStatus(`正在模拟 ${timeInput.value}。`);
+    setStatus('status.applyingDate', { date: timeInput.value });
   });
   panel.querySelector('[data-debug-reset-time]').addEventListener('click', () => {
     clearSiteDebugDate();
     dispatchTime('');
     timeInput.value = '';
-    setStatus('已恢复当前时间。');
+    setStatus('status.resetDate');
   });
   panel.querySelectorAll('[data-debug-preset]').forEach((button) => button.addEventListener('click', () => {
     const key = button.dataset.debugPreset;
     const date = SITE_CONFIG.anniversaries[key]?.date ?? SITE_CONFIG.birthdays[key]?.date;
-    if (!date) return setStatus('这个示例日期尚未配置。');
+    if (!date) return setStatus('status.unconfigured');
     timeInput.value = makeLocalValue(date.length === 10 ? date.slice(5) : date);
     setSiteDebugDate(timeInput.value);
     dispatchTime(timeInput.value);
-    setStatus(`正在预览：${button.textContent.trim()}。`);
+    setStatus('status.previewing', { label: button.innerText.trim() });
   }));
 
   const setMemoryFilter = (year = '') => {
@@ -78,15 +91,18 @@ if (panel) {
     location.assign(target.href);
   }));
   panel.querySelector('[data-debug-run-audit]').addEventListener('click', async () => {
-    const pages = [['', '首页'], ['journey/', '时间线'], ['album/', '相册'], ['annual/', '年度回顾'], ['places/', '地点地图'], ['future/', '未来清单']];
-    setStatus('正在巡检六个页面…');
-    const results = await Promise.all(pages.map(async ([path, label]) => {
+    const pages = [['', 'debug.home'], ['journey/', 'debug.journey'], ['album/', 'debug.album'], ['annual/', 'debug.annual'], ['places/', 'debug.places'], ['future/', 'debug.future']];
+    setStatus('status.audit');
+    const results = await Promise.all(pages.map(async ([path, key]) => {
+      const label = text(key, language());
       try {
         const response = await fetch(new URL(path, new URL(panel.dataset.siteBase, location.href)));
         const html = await response.text();
-        return response.ok && html.includes('data-debug-panel') ? `${label}：通过` : `${label}：未通过`;
-      } catch { return `${label}：无法访问`; }
+        return response.ok && html.includes('data-debug-panel') ? text('status.auditPass', language(), { page: label }) : text('status.auditFail', language(), { page: label });
+      } catch { return text('status.auditUnavailable', language(), { page: label }); }
     }));
-    setStatus(results.join(' · '));
+    statusKey = '';
+    renderStatus = () => results.join(' · ');
+    status.textContent = renderStatus();
   });
 }

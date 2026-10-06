@@ -1,4 +1,16 @@
+import { localize } from '../src/lib/i18n.js';
+
 const SELECTION_ZOOM = 1.35;
+
+function language() {
+  return globalThis.document?.documentElement?.dataset.language ?? 'zh';
+}
+
+function copyHTML(value) {
+  const zh = typeof value === 'string' ? value : value?.zh ?? value?.en ?? '';
+  const en = typeof value === 'string' ? value : value?.en ?? value?.zh ?? '';
+  return `<span lang="zh-CN" data-locale-copy="zh"${language() === 'zh' ? '' : ' hidden'}>${escapeHTML(zh)}</span><span lang="en" data-locale-copy="en"${language() === 'en' ? '' : ' hidden'}>${escapeHTML(en)}</span>`;
+}
 
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (character) => ({
@@ -17,15 +29,15 @@ export function memoriesFromIndex(indexDocument, memoryPlaces) {
     return {
       id,
       placeIds,
-      title: link.querySelector('strong')?.textContent.trim() ?? '',
+      title: { zh: link.dataset.memoryTitleZh ?? '', en: link.dataset.memoryTitleEn ?? '' },
       date: link.querySelector('time')?.textContent.trim() ?? '',
-      caption: link.dataset.memoryCaption ?? '',
+      caption: { zh: link.dataset.memoryCaptionZh ?? '', en: link.dataset.memoryCaptionEn ?? '' },
       image: image.getAttribute('src'),
       imageSrcSet: image.getAttribute('srcset') ?? '',
       viewerImage: image.getAttribute('data-pswp-src') || image.getAttribute('src'),
       width: Number(image.getAttribute('data-pswp-width') || image.getAttribute('width')) || 1600,
       height: Number(image.getAttribute('data-pswp-height') || image.getAttribute('height')) || 1200,
-      imageAlt: image.getAttribute('alt'),
+      imageAlt: { zh: image.dataset.localeAltZh ?? image.getAttribute('alt'), en: image.dataset.localeAltEn ?? image.getAttribute('alt') },
       albumHref: link.getAttribute('href'),
     };
   });
@@ -78,16 +90,16 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
   function addSceneImage(scene) {
     imageLayer?.remove();
     imageLayer = leaflet.imageOverlay(`${data.baseUrl ?? '../'}${scene.image}`, boundsForScene(scene), {
-      alt: `${scene.label}插画地图`,
+      alt: `${localize(scene.label, language())} ${language() === 'en' ? 'illustrated map' : '插画地图'}`,
       interactive: false,
     }).addTo(map);
   }
   addSceneImage(activeScene);
-  leaflet.control.zoom({
+  const zoomControl = leaflet.control.zoom({
     zoomInText: '<svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>',
-    zoomInTitle: '放大地图',
+    zoomInTitle: language() === 'en' ? 'Zoom in' : '放大地图',
     zoomOutText: '<svg class="icon" aria-hidden="true"><use href="#icon-minus"></use></svg>',
-    zoomOutTitle: '缩小地图',
+    zoomOutTitle: language() === 'en' ? 'Zoom out' : '缩小地图',
   }).addTo(map);
   let selectedIndex = -1;
   let selectedPlaceId = null;
@@ -101,26 +113,26 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
   const renderViewer = () => {
     const memory = memories[selectedIndex];
     if (!memory) {
-      viewer.innerHTML = '<p class="atlas-viewer-empty"><svg class="icon" aria-hidden="true"><use href="#icon-map-pin"></use></svg><span>从一处足迹开始</span><small>点击地图标记，或从上方选择城市，打开对应回忆。</small></p>';
+      viewer.innerHTML = `<p class="atlas-viewer-empty"><svg class="icon" aria-hidden="true"><use href="#icon-map-pin"></use></svg>${copyHTML({ zh: '从一处足迹开始', en: 'Start with a place' })}<small>${copyHTML({ zh: '点击地图标记，或从上方选择城市，打开对应回忆。', en: 'Select a map marker or choose a city above to open its memories.' })}</small></p>`;
       return;
     }
     const selectedPlace = places.get(selectedPlaceId) ?? places.get(memory.placeIds[0]);
     const linkedPlaces = memory.placeIds.map((id) => places.get(id));
     viewer.innerHTML = `
       <figure class="atlas-photo memory-image-frame memory-image-hover">
-        <img src="${escapeHTML(memory.image)}"${memory.imageSrcSet ? ` srcset="${escapeHTML(memory.imageSrcSet)}" sizes="390px"` : ''} alt="${escapeHTML(memory.imageAlt ?? memory.title)}" loading="lazy" decoding="async">
+        <img src="${escapeHTML(memory.image)}"${memory.imageSrcSet ? ` srcset="${escapeHTML(memory.imageSrcSet)}" sizes="390px"` : ''} alt="${escapeHTML(localize(memory.imageAlt ?? memory.title, language()))}" data-locale-alt-zh="${escapeHTML(localize(memory.imageAlt ?? memory.title, 'zh'))}" data-locale-alt-en="${escapeHTML(localize(memory.imageAlt ?? memory.title, 'en'))}" loading="lazy" decoding="async">
         <figcaption>${escapeHTML(memory.date)}</figcaption>
-        <button type="button" class="atlas-photo-expand" data-atlas-photo-expand aria-label="全屏查看 ${escapeHTML(memory.title)}"><svg class="icon" aria-hidden="true"><use href="#icon-expand"></use></svg></button>
+        <button type="button" class="atlas-photo-expand" data-atlas-photo-expand aria-label="全屏查看 ${escapeHTML(localize(memory.title, 'zh'))}" data-locale-aria-label-zh="全屏查看 ${escapeHTML(localize(memory.title, 'zh'))}" data-locale-aria-label-en="View ${escapeHTML(localize(memory.title, 'en'))} full screen"><svg class="icon" aria-hidden="true"><use href="#icon-expand"></use></svg></button>
       </figure>
       <div class="atlas-memory-copy">
-        <p class="atlas-place-label">${linkedPlaces.map((place) => `${escapeHTML(place.name)} · ${escapeHTML(place.region)}`).join('　/　')}</p>
-        <h2>${escapeHTML(memory.title)}</h2>
-        <p>${escapeHTML(memory.caption)}</p>
-        <a class="atlas-album-link" href="${escapeHTML(memory.albumHref)}">在时间故事中查看 <svg class="icon" aria-hidden="true"><use href="#icon-external-link"></use></svg></a>
-        <div class="atlas-navigation" aria-label="浏览地图记忆">
-          <button type="button" data-atlas-previous aria-label="上一张照片" ${selectedIndex === 0 ? 'disabled' : ''}><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg><span>上一张</span></button>
+        <p class="atlas-place-label">${linkedPlaces.map((place) => copyHTML({ zh: `${localize(place.name, 'zh')} · ${localize(place.region, 'zh')}`, en: `${localize(place.name, 'en')} · ${localize(place.region, 'en')}` })).join('　/　')}</p>
+        <h2>${copyHTML(memory.title)}</h2>
+        <p>${copyHTML(memory.caption)}</p>
+        <a class="atlas-album-link" href="${escapeHTML(memory.albumHref)}">${copyHTML({ zh: '在时间故事中查看', en: 'View in the memory timeline' })} <svg class="icon" aria-hidden="true"><use href="#icon-external-link"></use></svg></a>
+        <div class="atlas-navigation" aria-label="浏览地图记忆" data-locale-aria-label-zh="浏览地图记忆" data-locale-aria-label-en="Browse map memories">
+          <button type="button" data-atlas-previous aria-label="上一张照片" data-locale-aria-label-zh="上一张照片" data-locale-aria-label-en="Previous photo" ${selectedIndex === 0 ? 'disabled' : ''}><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg><span>${copyHTML({ zh: '上一张', en: 'Previous' })}</span></button>
           <span aria-live="polite">${selectedIndex + 1} / ${memories.length}</span>
-          <button type="button" data-atlas-next aria-label="下一张照片" ${selectedIndex === memories.length - 1 ? 'disabled' : ''}><span>下一张</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></button>
+          <button type="button" data-atlas-next aria-label="下一张照片" data-locale-aria-label-zh="下一张照片" data-locale-aria-label-en="Next photo" ${selectedIndex === memories.length - 1 ? 'disabled' : ''}><span>${copyHTML({ zh: '下一张', en: 'Next' })}</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></button>
         </div>
       </div>`;
     viewer.querySelector('[data-atlas-previous]')?.addEventListener('click', () => selectMemory(selectedIndex - 1));
@@ -135,11 +147,11 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
             msrc: item.id === memory.id ? viewer.querySelector('.atlas-photo img')?.currentSrc : item.image,
             width: item.width,
             height: item.height,
-            alt: item.imageAlt ?? item.title,
-            title: item.title,
+            alt: localize(item.imageAlt ?? item.title, language()),
+            title: localize(item.title, language()),
             date: item.date,
-            description: item.caption,
-            place: linkedPlace ? `${linkedPlace.name} · ${linkedPlace.region}` : '',
+            description: localize(item.caption, language()),
+            place: linkedPlace ? `${localize(linkedPlace.name, language())} · ${localize(linkedPlace.region, language())}` : '',
           };
       });
       openPhoto(photoItems, selectedIndex, event.currentTarget);
@@ -223,6 +235,7 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
   }
 
   function createMarkers() {
+    markerLayer?.remove();
     markerLayer = leaflet.markerClusterGroup({
       maxClusterRadius: 52,
       showCoverageOnHover: false,
@@ -230,7 +243,7 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
       zoomToBoundsOnClick: true,
       iconCreateFunction: (cluster) => leaflet.divIcon({
         className: 'atlas-cluster',
-        html: `<span><span aria-hidden="true">${cluster.getChildCount()}</span><span class="visually-hidden">${cluster.getChildCount()} 处足迹，放大以展开</span></span>`,
+        html: `<span><span aria-hidden="true">${cluster.getChildCount()}</span><span class="visually-hidden">${cluster.getChildCount()} ${language() === 'en' ? 'places, zoom to expand' : '处足迹，放大以展开'}</span></span>`,
         iconSize: [48, 48],
       }),
     }).addTo(map);
@@ -239,8 +252,12 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
       const point = pointForPlace(place);
       if (!placeMemories.length || !point) continue;
       const marker = leaflet.marker(point, {
-        title: `${place.name}，${placeMemories.length} 段回忆`,
-        alt: `${place.name}：${placeMemories.map((memory) => memory.title).join('、')}`,
+        title: language() === 'en'
+          ? `${localize(place.name, 'en')}, ${placeMemories.length} memories`
+          : `${localize(place.name, 'zh')}，${placeMemories.length} 段回忆`,
+        alt: language() === 'en'
+          ? `${localize(place.name, 'en')}: ${placeMemories.map((memory) => localize(memory.title, 'en')).join(', ')}`
+          : `${localize(place.name, 'zh')}：${placeMemories.map((memory) => localize(memory.title, 'zh')).join('、')}`,
         keyboard: true,
         icon: createMarkerIcon(place),
       });
@@ -262,16 +279,23 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
     });
   }
 
-  list.replaceChildren();
-  for (const memory of memories) {
-    const item = root.ownerDocument.createElement('li');
-    const locationNames = memory.placeIds.map((id) => places.get(id).name).join(' · ');
-    item.innerHTML = `<button type="button" class="atlas-memory-link" data-memory-id="${escapeHTML(memory.id)}"><span class="atlas-memory-date">${escapeHTML(memory.date)}</span><strong>${escapeHTML(memory.title)}</strong><small>${escapeHTML(locationNames)}</small></button>`;
-    const button = item.firstElementChild;
-    button.addEventListener('click', () => selectMemory(memories.indexOf(memory), memory.placeIds[0]));
-    list.append(item);
+  function renderMemoryList() {
+    list.replaceChildren();
+    for (const memory of memories) {
+      const item = root.ownerDocument.createElement('li');
+      const locationNames = {
+        zh: memory.placeIds.map((id) => localize(places.get(id).name, 'zh')).join(' · '),
+        en: memory.placeIds.map((id) => localize(places.get(id).name, 'en')).join(' · '),
+      };
+      item.innerHTML = `<button type="button" class="atlas-memory-link" data-memory-id="${escapeHTML(memory.id)}"><span class="atlas-memory-date">${escapeHTML(memory.date)}</span><strong>${copyHTML(memory.title)}</strong><small>${copyHTML(locationNames)}</small></button>`;
+      const button = item.firstElementChild;
+      button.addEventListener('click', () => selectMemory(memories.indexOf(memory), memory.placeIds[0]));
+      list.append(item);
+    }
   }
+  renderMemoryList();
 
+  let renderLocationOptions = () => {};
   if (locationPicker) {
     const placeMemoryCounts = new Map();
     for (const memory of memories) {
@@ -290,29 +314,39 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
     const travelAreaIds = [...placesByTravelArea.keys()].sort((a, b) => (
       travelAreasById.get(a).order - travelAreasById.get(b).order
     ));
-    for (const travelAreaId of travelAreaIds) {
-      const group = root.ownerDocument.createElement('optgroup');
-      group.label = travelAreasById.get(travelAreaId).label;
-      for (const place of placesByTravelArea.get(travelAreaId).sort((a, b) => (
-        a.region.localeCompare(b.region, 'zh-CN') || a.name.localeCompare(b.name, 'zh-CN')
-      ))) {
-        const option = root.ownerDocument.createElement('option');
-        option.value = place.id;
-        const memoryCount = placeMemoryCounts.get(place.id);
-        const areaLabel = place.travelArea.label.split(' · ').at(-1);
-        const hasDistinctRegion = place.region
-          && place.region !== place.travelArea.country
-          && place.region !== areaLabel;
-        const locationLabel = hasDistinctRegion
-          ? `${place.name} · ${place.region}`
-          : place.name;
-        option.textContent = memoryCount > 1
-          ? `${locationLabel} · ${memoryCount} 段回忆`
-          : locationLabel;
-        group.append(option);
+    const placeholder = locationPicker.querySelector('option[value=""]');
+    renderLocationOptions = () => {
+      const selectedValue = locationPicker.value;
+      locationPicker.replaceChildren();
+      if (placeholder) locationPicker.append(placeholder.cloneNode(true));
+      for (const travelAreaId of travelAreaIds) {
+        const group = root.ownerDocument.createElement('optgroup');
+        group.label = localize(travelAreasById.get(travelAreaId).label, language());
+        for (const place of placesByTravelArea.get(travelAreaId).sort((a, b) => (
+          localize(a.region, language()).localeCompare(localize(b.region, language()), language() === 'en' ? 'en' : 'zh-CN')
+          || localize(a.name, language()).localeCompare(localize(b.name, language()), language() === 'en' ? 'en' : 'zh-CN')
+        ))) {
+          const option = root.ownerDocument.createElement('option');
+          option.value = place.id;
+          const memoryCount = placeMemoryCounts.get(place.id);
+          const areaLabel = localize(place.travelArea.label, language()).split(' · ').at(-1);
+          const region = localize(place.region, language());
+          const hasDistinctRegion = region
+            && region !== localize(place.travelArea.country, language())
+            && region !== areaLabel;
+          const locationLabel = hasDistinctRegion
+            ? `${localize(place.name, language())} · ${region}`
+            : localize(place.name, language());
+          option.textContent = memoryCount > 1
+            ? language() === 'en' ? `${locationLabel} · ${memoryCount} memories` : `${locationLabel} · ${memoryCount} 段回忆`
+            : locationLabel;
+          group.append(option);
+        }
+        locationPicker.append(group);
       }
-      locationPicker.append(group);
-    }
+      if ([...locationPicker.options].some((option) => option.value === selectedValue)) locationPicker.value = selectedValue;
+    };
+    renderLocationOptions();
     onLocationChange = () => {
       const placeId = locationPicker.value;
       if (!placeId || destroyed) return;
@@ -327,6 +361,19 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
   if (overviewButton) overviewButton.hidden = true;
   overviewButton?.addEventListener('click', showOverview);
   renderViewer();
+  const onLanguageChange = () => {
+    addSceneImage(activeScene);
+    renderViewer();
+    renderMemoryList();
+    renderLocationOptions();
+    createMarkers();
+    updateActiveMarker(selectedPlaceId);
+    const zoomIn = mapElement.parentElement?.querySelector('.leaflet-control-zoom-in');
+    const zoomOut = mapElement.parentElement?.querySelector('.leaflet-control-zoom-out');
+    if (zoomIn) zoomIn.title = language() === 'en' ? 'Zoom in' : '放大地图';
+    if (zoomOut) zoomOut.title = language() === 'en' ? 'Zoom out' : '缩小地图';
+  };
+  root.ownerDocument.addEventListener('site:language-change', onLanguageChange);
   const targetMemoryId = view.location.hash.match(/^#memory-(.+)$/)?.[1];
   const linkedMemoryIndex = memories.findIndex((memory) => memory.id === targetMemoryId);
   if (linkedMemoryIndex >= 0) selectMemory(linkedMemoryIndex);
@@ -347,6 +394,7 @@ export function mountMemoryAtlas(root, data, leaflet = globalThis.L, { openPhoto
     if (destroyed) return;
     destroyed = true;
     if (onLocationChange) locationPicker?.removeEventListener('change', onLocationChange);
+    root.ownerDocument.removeEventListener('site:language-change', onLanguageChange);
     view.removeEventListener('hashchange', onHashChange);
     resizeObserver?.disconnect();
     map.remove();

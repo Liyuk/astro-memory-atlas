@@ -1,7 +1,7 @@
 export const places = [
-  { id: 'river', name: '云杉河岸', region: '北岸区', point: { x: 0.37, y: 0.44 }, travelArea: { id: 'north', country: '示例地区', label: '示例地区 · 北岸', order: 1 } },
-  { id: 'old-town', name: '旧城街角', region: '旧城区', point: { x: 0.61, y: 0.36 }, travelArea: { id: 'central', country: '示例地区', label: '示例地区 · 旧城', order: 2 } },
-  { id: 'garden', name: '星河花园', region: '中央区', point: { x: 0.56, y: 0.58 }, travelArea: { id: 'central', country: '示例地区', label: '示例地区 · 旧城', order: 2 } },
-  { id: 'mountain', name: '青岚山', region: '西郊', point: { x: 0.24, y: 0.29 }, travelArea: { id: 'west', country: '示例地区', label: '示例地区 · 西郊', order: 3 } },
-  { id: 'coast', name: '月湾海岸', region: '南岸区', point: { x: 0.78, y: 0.72 }, travelArea: { id: 'south', country: '示例地区', label: '示例地区 · 南岸', order: 4 } },
+  { id: 'river', name: { zh: '云杉河岸', en: 'Spruce Riverbank' }, region: { zh: '北岸区', en: 'North Bank' }, point: { x: 0.37, y: 0.44 }, travelArea: { id: 'north', country: { zh: '示例地区', en: 'Example Region' }, label: { zh: '示例地区 · 北岸', en: 'Example Region · North Bank' }, order: 1 } },
+  { id: 'old-town', name: { zh: '旧城街角', en: 'Old Town Corner' }, region: { zh: '旧城区', en: 'Old Town' }, point: { x: 0.61, y: 0.36 }, travelArea: { id: 'central', country: { zh: '示例地区', en: 'Example Region' }, label: { zh: '示例地区 · 旧城', en: 'Example Region · Old Town' }, order: 2 } },
+  { id: 'garden', name: { zh: '星河花园', en: 'Starlight Garden' }, region: { zh: '中央区', en: 'Central District' }, point: { x: 0.56, y: 0.58 }, travelArea: { id: 'central', country: { zh: '示例地区', en: 'Example Region' }, label: { zh: '示例地区 · 旧城', en: 'Example Region · Old Town' }, order: 2 } },
+  { id: 'mountain', name: { zh: '青岚山', en: 'Blue Mist Mountain' }, region: { zh: '西郊', en: 'West Hills' }, point: { x: 0.24, y: 0.29 }, travelArea: { id: 'west', country: { zh: '示例地区', en: 'Example Region' }, label: { zh: '示例地区 · 西郊', en: 'Example Region · West Hills' }, order: 3 } },
+  { id: 'coast', name: { zh: '月湾海岸', en: 'Moon Bay Coast' }, region: { zh: '南岸区', en: 'South Shore' }, point: { x: 0.78, y: 0.72 }, travelArea: { id: 'south', country: { zh: '示例地区', en: 'Example Region' }, label: { zh: '示例地区 · 南岸', en: 'Example Region · South Shore' }, order: 4 } },
 ];

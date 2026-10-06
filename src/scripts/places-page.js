@@ -1,6 +1,7 @@
 import { mountMemoryAtlas, memoriesFromIndex } from '../../places/map.js';
 import { createMemoryImageViewer } from './memory-image-viewer.js';
 import { atlasData } from '../../places/data.js';
+import { text } from '../i18n/copy.js';
 
 const root = document.querySelector('#memory-atlas');
 const imageViewer = createMemoryImageViewer();
@@ -17,5 +18,5 @@ try {
   });
   window.addEventListener('pagehide', destroy, { once: true });
 } catch {
-  document.querySelector('#atlas-viewer').textContent = '相册暂时无法载入，请稍后重试。';
+  document.querySelector('#atlas-viewer').textContent = text('places.unavailable', document.documentElement.dataset.language ?? 'zh');
 }

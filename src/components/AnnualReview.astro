@@ -1,8 +1,10 @@
 ---
 import OptimizedImage from './OptimizedImage.astro';
+import LocalizedText from './LocalizedText.astro';
 import { memories } from '../data/memories.js';
 import { annualRecapByYear } from '../data/annual-recaps.js';
 import { getMemoryYears } from '../lib/memory-years.js';
+import { COPY } from '../i18n/copy.js';
 
 const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
 const yearsByMemory = new Map();
@@ -37,12 +39,12 @@ const annualGroups = years.map((year) => {
 ---
 <main class="annual-page" id="annual-review">
   <header class="annual-intro">
-    <p class="annual-kicker">OUR YEARS TOGETHER</p>
-    <h1>年度回顾</h1>
-    <p>按年份浏览这份虚构示例里的重要日子和日常片段。</p>
+    <p class="annual-kicker"><LocalizedText value={COPY['annual.kicker']} /></p>
+    <h1><LocalizedText value={COPY['annual.title']} /></h1>
+    <p><LocalizedText value={COPY['annual.intro']} /></p>
   </header>
 
-  <nav class="annual-year-nav" aria-label="跳转到年度回顾">
+  <nav class="annual-year-nav" aria-label={COPY['annual.jump'].zh} data-locale-aria-label-zh={COPY['annual.jump'].zh} data-locale-aria-label-en={COPY['annual.jump'].en}>
     {years.map((year) => <a href={`#annual-${year}`} aria-current={year === years[0] ? 'location' : undefined}>{year}</a>)}
   </nav>
 
@@ -50,25 +52,25 @@ const annualGroups = years.map((year) => {
     {annualGroups.map(({ year, recap, highlights, additionalMemories }) => (
       <section class="annual-year" id={`annual-${year}`} aria-labelledby={`annual-title-${year}`}>
         <header class="annual-year-heading">
-          <p>OUR YEAR · {year}</p>
+          <p><LocalizedText value={COPY['annual.yearKicker']} values={{ year }} /></p>
           <h2 id={`annual-title-${year}`}>{year}</h2>
-          {recap && <h3>{recap.theme}</h3>}
-          {!recap && <p class="annual-year-note">这一年，我们一起经历的事</p>}
+          {recap && <h3><LocalizedText value={recap.theme} /></h3>}
+          {!recap && <p class="annual-year-note"><LocalizedText value={COPY['annual.yearNote']} /></p>}
         </header>
 
         {highlights.length > 0 && (
-          <div class="annual-highlights" aria-label={`${year} 年重点回忆`}>
+          <div class="annual-highlights" aria-label={`${year} 年重点回忆`} data-locale-aria-label-zh={`${year} 年重点回忆`} data-locale-aria-label-en={`Highlights from ${year}`}>
             {highlights.map(({ title, note, memory }) => (
               memory ? (
                 <a class="annual-highlight annual-highlight--photo" href={`${siteBase}album/#memory-${memory.id}`}>
                   <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
-                  <span class="annual-highlight-copy"><time>{memory.date}</time><strong>{title ?? memory.title}</strong><span>{note ?? memory.description}</span></span>
+                  <span class="annual-highlight-copy"><time>{memory.date}</time><strong><LocalizedText value={title ?? memory.title} /></strong><span><LocalizedText value={note ?? memory.description} /></span></span>
                 </a>
               ) : (
                 <article class="annual-highlight annual-highlight--note">
                   <span class="annual-highlight-year">{year}</span>
-                  <strong>{title}</strong>
-                  {note && <span>{note}</span>}
+                  <strong><LocalizedText value={title} /></strong>
+                  {note && <span><LocalizedText value={note} /></span>}
                 </article>
               )
             ))}
@@ -76,11 +78,11 @@ const annualGroups = years.map((year) => {
         )}
 
         {additionalMemories.length > 0 && (
-          <div class="annual-gallery" aria-label={`${year} 年的其他相册照片`}>
+          <div class="annual-gallery" aria-label={`${year} 年的其他相册照片`} data-locale-aria-label-zh={`${year} 年的其他相册照片`} data-locale-aria-label-en={`More photos from ${year}`}>
             {additionalMemories.map((memory) => (
               <a class="annual-photo" href={`${siteBase}album/#memory-${memory.id}`}>
                 <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
-                <span class="annual-photo-caption"><time>{memory.date}</time><strong>{memory.title}</strong></span>
+                <span class="annual-photo-caption"><time>{memory.date}</time><strong><LocalizedText value={memory.title} /></strong></span>
               </a>
             ))}
           </div>
@@ -91,13 +93,13 @@ const annualGroups = years.map((year) => {
 
   {unassigned.length > 0 && (
     <section class="annual-unassigned" aria-labelledby="annual-unassigned-title">
-      <h2 id="annual-unassigned-title">还没想起具体年份的回忆</h2>
-      <p>有几段回忆，我们还没确定具体年份；等想起来，我再和你补上。</p>
+      <h2 id="annual-unassigned-title"><LocalizedText value={COPY['annual.unassignedTitle']} /></h2>
+      <p><LocalizedText value={COPY['annual.unassignedIntro']} /></p>
       <div class="annual-gallery">
         {unassigned.map((memory) => (
           <a class="annual-photo" href={`${siteBase}album/#memory-${memory.id}`}>
             <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
-            <span class="annual-photo-caption"><time>{memory.date}</time><strong>{memory.title}</strong></span>
+            <span class="annual-photo-caption"><time>{memory.date}</time><strong><LocalizedText value={memory.title} /></strong></span>
           </a>
         ))}
       </div>

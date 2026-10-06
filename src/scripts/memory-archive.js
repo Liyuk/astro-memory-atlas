@@ -1,4 +1,5 @@
 import { createMemoryImageViewer } from './memory-image-viewer.js';
+import { text } from '../i18n/copy.js';
 
 export function initializeMemoryArchiveLayout() {
   const gallery = document.querySelector('.book-spread');
@@ -29,6 +30,7 @@ export function initializeMemoryArchiveLayout() {
 }
 
 export function initializeMemoryInteractions({ entries, galleryGroups, reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)') }) {
+  const language = () => document.documentElement.dataset.language ?? 'zh';
   const gallery = document.querySelector('.book-spread');
   const memorySearch = document.querySelector('[data-memory-search]');
   const memoryYear = document.querySelector('[data-memory-year]');
@@ -54,9 +56,11 @@ export function initializeMemoryInteractions({ entries, galleryGroups, reduceMot
       group.querySelectorAll('.memory-entry').forEach((entry) => entry.classList.toggle('is-page-active', entry === active));
     });
     pageToggle?.setAttribute('aria-pressed', String(pageMode));
-    if (pageToggle) pageToggle.textContent = pageMode ? '返回连续浏览' : '开始翻页阅读';
+    if (pageToggle) pageToggle.textContent = text(pageMode ? 'home.continuousMode' : 'home.startPageMode', language());
     if (pageControls) pageControls.hidden = !pageMode;
-    pageProgress.textContent = visible.length ? `${readingPage + 1} / ${visible.length}` : '没有可阅读的回忆';
+    pageProgress.textContent = visible.length
+      ? text('home.readingProgress', language(), { current: readingPage + 1, total: visible.length })
+      : text('home.noReadingMemories', language());
     if (pagePrevious) pagePrevious.disabled = !pageMode || readingPage <= 0 || !visible.length;
     if (pageNext) pageNext.disabled = !pageMode || readingPage >= visible.length - 1 || !visible.length;
   }
@@ -94,10 +98,10 @@ export function initializeMemoryInteractions({ entries, galleryGroups, reduceMot
       width: Number(image?.dataset.pswpWidth || image?.naturalWidth || image?.getAttribute('width')),
       height: Number(image?.dataset.pswpHeight || image?.naturalHeight || image?.getAttribute('height')),
       alt: image?.alt || '',
-      title: entry.querySelector('h3')?.textContent.trim() || '',
+      title: entry.querySelector('h3')?.innerText.trim() || '',
       date: entry.querySelector('.timeline-date')?.textContent.trim() || '',
-      description: [...(copy?.querySelectorAll('p') || [])].find((paragraph) => !paragraph.classList.contains('timeline-date') && !paragraph.classList.contains('place'))?.textContent || '',
-      place: copy?.querySelector('.place')?.textContent || '',
+      description: [...(copy?.querySelectorAll('p') || [])].find((paragraph) => !paragraph.classList.contains('timeline-date') && !paragraph.classList.contains('place'))?.innerText || '',
+      place: copy?.querySelector('.place')?.innerText || '',
     };
   };
 
@@ -107,16 +111,19 @@ export function initializeMemoryInteractions({ entries, galleryGroups, reduceMot
     image.dataset.memoryIndex = String(index);
     image.setAttribute('role', 'button');
     image.setAttribute('tabindex', '0');
-    image.setAttribute('aria-label', `放大查看：${entry.querySelector('h3')?.textContent || image.alt}`);
+    const updateImageLabel = () => image.setAttribute('aria-label', text('home.zoomMemory', language(), { title: entry.querySelector('h3')?.innerText || image.alt }));
+    updateImageLabel();
+    document.addEventListener('site:language-change', updateImageLabel);
     image.addEventListener('error', () => {
       image.hidden = true;
       const placeholder = document.createElement('span');
       placeholder.className = 'memory-art-pending';
-      placeholder.textContent = '插画准备中';
+      placeholder.textContent = text('home.illustrationLoading', language());
       image.parentElement.append(placeholder);
     }, { once: true });
   });
 
+  let reapplyFilters = () => {};
   function initializeFilters() {
     if (!memorySearch || !memoryYear || !memoryFilterSummary || !memoryFilterEmpty) return;
     const years = [...new Set(entries.flatMap((entry) =>
@@ -141,7 +148,7 @@ export function initializeMemoryInteractions({ entries, galleryGroups, reduceMot
       entries.forEach((entry) => {
         const date = entry.querySelector('.timeline-date')?.textContent || '';
         const matchesYear = !year || date.includes(year);
-        const matchesQuery = !query || entry.textContent.toLocaleLowerCase().includes(query)
+        const matchesQuery = !query || entry.innerText.toLocaleLowerCase().includes(query)
           || (entry.querySelector('img')?.alt || '').toLocaleLowerCase().includes(query);
         entry.hidden = !(matchesYear && matchesQuery);
         if (!entry.hidden) matchCount += 1;
@@ -151,14 +158,15 @@ export function initializeMemoryInteractions({ entries, galleryGroups, reduceMot
       });
       memoryFilterEmpty.hidden = !isFiltering || matchCount > 0;
       memoryFilterSummary.textContent = isFiltering
-        ? `找到 ${matchCount} 段回忆`
-        : `共 ${entries.length} 段回忆 · 按关键词或年份找一找`;
+        ? text('home.searchResultCount', language(), { count: matchCount })
+        : text('home.totalMemoryCount', language(), { count: entries.length });
       const activeEntry = visibleEntries()[readingPage];
       if (activeEntry) readingPage = Math.max(0, visibleEntries().indexOf(activeEntry));
       renderPageMode();
     };
     memorySearch.addEventListener('input', applyFilters);
     memoryYear.addEventListener('change', applyFilters);
+    reapplyFilters = applyFilters;
     applyFilters();
   }
 
@@ -187,12 +195,16 @@ export function initializeMemoryInteractions({ entries, galleryGroups, reduceMot
 
   initializeFilters();
   renderPageMode();
+  document.addEventListener('site:language-change', () => {
+    reapplyFilters();
+    renderPageMode();
+  });
   if (gallery || document.querySelector('[data-story-memory]')) {
     document.addEventListener('click', (event) => {
       const storyMemory = event.target.closest('[data-story-memory]');
       const image = event.target.closest('img[data-memory-index]');
       if (storyMemory) {
-        const index = entries.findIndex((entry) => entry.querySelector('h3')?.textContent.trim() === storyMemory.dataset.storyMemory);
+        const index = entries.findIndex((entry) => entry.id === `memory-${storyMemory.dataset.storyMemory}`);
         if (index >= 0) openViewer(entries, index, storyMemory);
         return;
       }

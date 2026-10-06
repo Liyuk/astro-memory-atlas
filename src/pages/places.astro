@@ -5,6 +5,8 @@ import { getImage } from 'astro:assets';
 import { getAlbumImageOptions, getTimelineImages } from '../lib/image-assets.js';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { SITE_CONFIG } from '../config/site.js';
+import LocalizedText from '../components/LocalizedText.astro';
+import { COPY } from '../i18n/copy.js';
 
 const fallbackMarkup = await readFile(path.resolve('src/generated/atlas-memory-index.html'), 'utf8');
 const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
@@ -34,8 +36,8 @@ const fallbackMemoryLinks = fallbackMarkup.replace(/<img\b([^>]*?)src="[^"]*asse
 });
 ---
 <SiteLayout
-  title={`地图足迹 · ${SITE_CONFIG.brand.name}`}
-  description="在虚构地图上浏览示例地点和关联记忆。"
+  title={{ zh: `${COPY['places.title'].zh} · ${SITE_CONFIG.brand.name.zh}`, en: `${COPY['places.title'].en} · ${SITE_CONFIG.brand.name.en}` }}
+  description={{ zh: '在虚构地图上浏览示例地点和关联记忆。', en: 'Browse fictional sample places and related memories on an illustrated map.' }}
   themeColor="#f4efe5"
   current="places"
   bodyClass="theme-atlas"
@@ -43,45 +45,45 @@ const fallbackMemoryLinks = fallbackMarkup.replace(/<img\b([^>]*?)src="[^"]*asse
   <link slot="head" rel="stylesheet" href={`${siteBase}places/vendor/leaflet.css`}>
   <link slot="head" rel="stylesheet" href={`${siteBase}places/vendor/MarkerCluster.css`}>
   <link slot="head" rel="stylesheet" href={`${siteBase}places/map.css`}>
-  <a class="skip-link" href="#atlas-map">跳到地图</a>
+  <a class="skip-link" href="#atlas-map" aria-label="跳到地图" data-locale-aria-label-zh="跳到地图" data-locale-aria-label-en="Skip to map"><LocalizedText value={{ zh: '跳到地图', en: 'Skip to map' }} /></a>
   <header class="atlas-header">
-    <a class="back-link" href={siteBase} aria-label="回到首页"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"/></svg><span>回到首页</span></a>
-    <h1>把回忆里的地点，<em>标在地图上。</em></h1>
-    <p class="atlas-intro">点击示例地点查看关联记忆，也可以按时间浏览。</p>
+    <a class="back-link" href={siteBase} aria-label={COPY['places.backHome'].zh} data-locale-aria-label-zh={COPY['places.backHome'].zh} data-locale-aria-label-en={COPY['places.backHome'].en}><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"/></svg><span><LocalizedText value={COPY['places.backHome']} /></span></a>
+    <h1><LocalizedText value={COPY['places.heading']} /></h1>
+    <p class="atlas-intro"><LocalizedText value={COPY['places.intro']} /></p>
   </header>
 
   <main id="memory-atlas" class="atlas-layout">
     <section class="map-column" aria-labelledby="map-heading">
       <div class="map-heading-row">
-        <div><p class="eyebrow">我们的足迹</p><h2 id="map-heading">旅行地图</h2></div>
+        <div><p class="eyebrow"><LocalizedText value={COPY['places.ourPlaces']} /></p><h2 id="map-heading"><LocalizedText value={COPY['places.map']} /></h2></div>
       </div>
       <div class="map-controls-row">
         <label class="atlas-location-picker" for="atlas-location-picker">
-          <span>按旅行区域找</span>
+          <span><LocalizedText value={COPY['places.byArea']} /></span>
           <span class="select-control">
             <select id="atlas-location-picker" data-atlas-location>
-              <option value="">选择一个城市或地点</option>
+              <option value="" data-locale-option-zh={COPY['places.choose'].zh} data-locale-option-en={COPY['places.choose'].en}>{COPY['places.choose'].zh}</option>
             </select>
             <svg class="icon select-control__icon" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
           </span>
         </label>
         <div class="map-toolbar">
-          <p class="map-hint">拖动地图 · 点击标记 · 使用缩放控件</p>
-          <button type="button" class="atlas-overview-button" data-atlas-overview hidden><svg class="icon" aria-hidden="true"><use href="#icon-map"/></svg><span>显示全部足迹</span></button>
+          <p class="map-hint"><LocalizedText value={COPY['places.mapHint']} /></p>
+          <button type="button" class="atlas-overview-button" data-atlas-overview hidden><svg class="icon" aria-hidden="true"><use href="#icon-map"/></svg><span><LocalizedText value={COPY['places.showAll']} /></span></button>
         </div>
       </div>
-      <div id="atlas-map" class="atlas-map" role="region" aria-label="可缩放的旅行足迹地图"></div>
-      <noscript><p>互动地图需要 JavaScript；下方仍可浏览照片缩略图并打开对应相册故事。</p></noscript>
-      <p class="map-disclaimer">这是一张按回忆整理的插画地图，地点只展示大致方位，不用于导航、测距或表示精确地址；跨城回忆可关联多个标记。</p>
+      <div id="atlas-map" class="atlas-map" role="region" aria-label={COPY['places.mapRegion'].zh} data-locale-aria-label-zh={COPY['places.mapRegion'].zh} data-locale-aria-label-en={COPY['places.mapRegion'].en}></div>
+      <noscript><p><LocalizedText value={COPY['places.noScript']} /></p></noscript>
+      <p class="map-disclaimer"><LocalizedText value={COPY['places.disclaimer']} /></p>
     </section>
 
-    <aside class="memory-column" aria-label="地图记忆">
+    <aside class="memory-column" aria-label={COPY['places.memoryList'].zh} data-locale-aria-label-zh={COPY['places.memoryList'].zh} data-locale-aria-label-en={COPY['places.memoryList'].en}>
       <section id="atlas-viewer" class="atlas-viewer" tabindex="-1" aria-live="polite" aria-atomic="true">
-        <p class="atlas-viewer-empty"><svg class="icon" aria-hidden="true"><use href="#icon-map-pin"/></svg><span>从一处足迹开始</span><small>点击地图标记，或从上方选择城市，打开对应回忆。</small></p>
+        <p class="atlas-viewer-empty"><svg class="icon" aria-hidden="true"><use href="#icon-map-pin"/></svg><span><LocalizedText value={COPY['places.startHere']} /></span><small><LocalizedText value={COPY['places.selectHint']} /></small></p>
       </section>
       <section class="memory-index" aria-labelledby="memory-index-heading">
-        <div class="section-heading"><p class="eyebrow">快速定位</p><h2 id="memory-index-heading">按时间与地点跳转</h2></div>
-        <ol id="atlas-memory-list" class="atlas-memory-list" aria-label="沿时间轴按地点和日期快速跳转">
+        <div class="section-heading"><p class="eyebrow"><LocalizedText value={COPY['places.quickFind']} /></p><h2 id="memory-index-heading"><LocalizedText value={COPY['places.jumpByDate']} /></h2></div>
+        <ol id="atlas-memory-list" class="atlas-memory-list" aria-label={COPY['places.timelineList'].zh} data-locale-aria-label-zh={COPY['places.timelineList'].zh} data-locale-aria-label-en={COPY['places.timelineList'].en}>
           <Fragment set:html={fallbackMemoryLinks} />
         </ol>
       </section>
@@ -89,7 +91,7 @@ const fallbackMemoryLinks = fallbackMarkup.replace(/<img\b([^>]*?)src="[^"]*asse
 
   </main>
 
-  <footer class="atlas-footer">两个人的记忆地图 · 虚构示例</footer>
+  <footer class="atlas-footer"><LocalizedText value={{ zh: '两个人的记忆地图 · 虚构示例', en: 'A Memory Atlas for Two · Fictional demo' }} /></footer>
   <script is:inline src={`${siteBase}places/vendor/leaflet.js`} defer></script>
   <script is:inline src={`${siteBase}places/vendor/leaflet.markercluster.js`} defer></script>
   <script>

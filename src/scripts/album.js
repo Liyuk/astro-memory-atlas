@@ -9,7 +9,15 @@ const date = document.querySelector('[data-memory-date]');
 const jump = document.querySelector('[data-memory-jump]');
 
 if (firstEntry && title && date && jump) {
-  title.textContent = firstEntry.querySelector('h3')?.textContent || '一段一起走过的日子';
+  const updateNudgeTitle = () => {
+    const heading = firstEntry.querySelector('h3');
+    const zh = heading?.querySelector('[data-locale-copy="zh"]')?.textContent || '一段一起走过的日子';
+    const en = heading?.querySelector('[data-locale-copy="en"]')?.textContent || 'A day we shared';
+    title.querySelector('[data-locale-copy="zh"]').textContent = zh;
+    title.querySelector('[data-locale-copy="en"]').textContent = en;
+  };
+  updateNudgeTitle();
+  document.addEventListener('site:language-change', updateNudgeTitle);
   date.textContent = firstEntry.querySelector('.timeline-date')?.textContent || '';
   jump.addEventListener('click', () => jumpToEntry(0));
 }

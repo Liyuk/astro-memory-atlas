@@ -1,3 +1,6 @@
+import { localize } from '../lib/i18n.js';
+import { text } from '../i18n/copy.js';
+
 export function createMemoryImageViewer({ loadPhotoSwipe = () => import('photoswipe'), documentRef = globalThis.document } = {}) {
   let activeViewer = null;
   let activeCaption = null;
@@ -21,24 +24,27 @@ export function createMemoryImageViewer({ loadPhotoSwipe = () => import('photosw
     activeCaption.append(date, title, description, place);
   }
 
+  const language = () => documentRef.documentElement.dataset.language ?? 'zh';
+  const photoData = (memory, itemIndex, index, thumbnail) => ({
+    src: memory.src,
+    element: itemIndex === index && thumbnail ? thumbnail : memory.element ?? null,
+    msrc: memory.msrc ?? memory.src,
+    width: Number(memory.width) || 1600,
+    height: Number(memory.height) || 1200,
+    alt: localize(memory.alt ?? '', language()),
+    title: localize(memory.title ?? '', language()),
+    date: memory.date ?? '',
+    description: localize(memory.description ?? '', language()),
+    place: localize(memory.place ?? '', language()),
+  });
+
   async function open(memories, index = 0, opener = null) {
     if (!Array.isArray(memories) || memories.length === 0) return;
     if (!Number.isInteger(index) || index < 0 || index >= memories.length) return;
     activeViewer?.close();
     const { default: PhotoSwipe } = await loadPhotoSwipe();
     const thumbnail = opener?.matches?.('img') ? opener : opener?.querySelector?.('img');
-    const dataSource = memories.map((memory, itemIndex) => ({
-      src: memory.src,
-      element: itemIndex === index && thumbnail ? thumbnail : memory.element ?? null,
-      msrc: memory.msrc ?? memory.src,
-      width: Number(memory.width) || 1600,
-      height: Number(memory.height) || 1200,
-      alt: memory.alt ?? '',
-      title: memory.title ?? '',
-      date: memory.date ?? '',
-      description: memory.description ?? '',
-      place: memory.place ?? '',
-    }));
+    const dataSource = memories.map((memory, itemIndex) => photoData(memory, itemIndex, index, thumbnail));
     const photoSwipe = new PhotoSwipe({
       dataSource,
       mainClass: 'pswp--anniversary',
@@ -62,20 +68,20 @@ export function createMemoryImageViewer({ loadPhotoSwipe = () => import('photosw
       imageClickAction: 'zoom',
       tapAction: 'toggle-controls',
       wheelToZoom: true,
-      closeTitle: '关闭照片大图',
-      zoomTitle: '放大照片',
-      arrowPrevTitle: '上一张照片',
-      arrowNextTitle: '下一张照片',
+      closeTitle: text('album.viewer.close', language()),
+      zoomTitle: text('album.viewer.zoom', language()),
+      arrowPrevTitle: text('album.viewer.previous', language()),
+      arrowNextTitle: text('album.viewer.next', language()),
     });
     photoSwipe.on('uiRegister', () => {
       photoSwipe.ui.registerElement({
-        name: 'anniversary-close', order: 1, className: 'pswp__button--anniversary-close', isButton: true, ariaLabel: '关闭照片大图', html: '<svg class="icon" aria-hidden="true"><use href="#icon-x"></use></svg>', onClick: 'close',
+        name: 'anniversary-close', order: 1, className: 'pswp__button--anniversary-close', isButton: true, ariaLabel: text('album.viewer.close', language()), html: '<svg class="icon" aria-hidden="true"><use href="#icon-x"></use></svg>', onClick: 'close',
       });
       photoSwipe.ui.registerElement({
-        name: 'anniversary-previous', order: 2, className: 'pswp__button--anniversary-previous', isButton: true, ariaLabel: '上一张照片', html: '<svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>', onClick: 'prev',
+        name: 'anniversary-previous', order: 2, className: 'pswp__button--anniversary-previous', isButton: true, ariaLabel: text('album.viewer.previous', language()), html: '<svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>', onClick: 'prev',
       });
       photoSwipe.ui.registerElement({
-        name: 'anniversary-next', order: 3, className: 'pswp__button--anniversary-next', isButton: true, ariaLabel: '下一张照片', html: '<svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>', onClick: 'next',
+        name: 'anniversary-next', order: 3, className: 'pswp__button--anniversary-next', isButton: true, ariaLabel: text('album.viewer.next', language()), html: '<svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>', onClick: 'next',
       });
       photoSwipe.ui.registerElement({
         name: 'anniversary-counter', order: 4, className: 'pswp__counter--anniversary-counter', isButton: false, appendTo: 'bar', html: '<span class="memory-viewer-count" aria-live="polite"></span>', onInit: (element) => { activeCounter = element; updateCaption(photoSwipe); },
@@ -93,9 +99,26 @@ export function createMemoryImageViewer({ loadPhotoSwipe = () => import('photosw
         },
       });
     });
+    const updateViewerLanguage = () => {
+      photoSwipe.options.dataSource = memories.map((memory, itemIndex) => photoData(memory, itemIndex, photoSwipe.currIndex, thumbnail));
+      updateCaption(photoSwipe);
+      const labels = [
+        ['.pswp__button--anniversary-close', 'album.viewer.close'],
+        ['.pswp__button--anniversary-previous', 'album.viewer.previous'],
+        ['.pswp__button--anniversary-next', 'album.viewer.next'],
+      ];
+      for (const [selector, key] of labels) {
+        const button = photoSwipe.pswpElement?.querySelector(selector);
+        if (!button) continue;
+        button.setAttribute('aria-label', text(key, language()));
+        button.setAttribute('title', text(key, language()));
+      }
+    };
+    documentRef.addEventListener('site:language-change', updateViewerLanguage);
     photoSwipe.on('change', () => updateCaption(photoSwipe));
     photoSwipe.on('close', () => {
       if (activeViewer === photoSwipe) activeViewer = null;
+      documentRef.removeEventListener('site:language-change', updateViewerLanguage);
       activeCaption = null;
       activeCounter = null;
       opener?.focus?.({ preventScroll: true });

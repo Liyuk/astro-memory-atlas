@@ -3,6 +3,8 @@ import { getImage, Image } from 'astro:assets';
 import { getAlbumImageOptions, resolveAlbumImage } from '../lib/image-assets.js';
 
 const { src, alt = '', fullSizeForViewer = false, ...attributes } = Astro.props;
+const altZh = typeof alt === 'string' ? alt : alt?.zh ?? alt?.en ?? '';
+const altEn = typeof alt === 'string' ? alt : alt?.en ?? alt?.zh ?? '';
 const image = resolveAlbumImage(src);
 const imagePath = String(src);
 const imageClassList = String(attributes.class ?? '').split(/\s+/);
@@ -21,7 +23,9 @@ const viewerImage = fullSizeForViewer
 
 <Image
   src={image}
-  alt={alt}
+  alt={altZh}
+  data-locale-alt-zh={altZh}
+  data-locale-alt-en={altEn}
   {...imageOptions}
   {...attributes}
   {...(viewerImage ? {

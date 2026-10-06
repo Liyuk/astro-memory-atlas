@@ -1,31 +1,33 @@
 ---
 import OptimizedImage from '../OptimizedImage.astro';
+import LocalizedText from '../LocalizedText.astro';
 import { SITE_CONFIG } from '../../config/site.js';
+import { COPY } from '../../i18n/copy.js';
 const anniversaries = Object.entries(SITE_CONFIG.anniversaries);
 const birthdays = Object.entries(SITE_CONFIG.birthdays);
 const monthDay = (date) => (date.length === 10 ? date.slice(5) : date).replace('-', '.');
 ---
-<section class="hero" id="opening" aria-label="虚构纪念册示例">
+<section class="hero" id="opening" aria-label={COPY['hero.accessible'].zh} data-locale-aria-label-zh={COPY['hero.accessible'].zh} data-locale-aria-label-en={COPY['hero.accessible'].en}>
   <div class="hero-art">
-    <figure><div class="cover-image-stack"><OptimizedImage src="./assets/images/demo/river.svg" alt="夕阳下两个人沿着河岸散步的抽象插画" fetchpriority="high" decoding="async" /></div><figcaption class="photo-note">林岚 &amp; 周屿 · 虚构示例</figcaption></figure>
-    <p class="hero-caption">把日常收进地图，<br><em>让回忆慢慢发光。</em></p>
+    <figure><div class="cover-image-stack"><OptimizedImage src="./assets/images/demo/river.svg" alt={{ zh: '夕阳下两个人沿着河岸散步的抽象插画', en: 'An abstract illustration of two people walking along a river at sunset' }} fetchpriority="high" decoding="async" /></div><figcaption class="photo-note">林岚 / Lin Lan &amp; 周屿 / Zhou Yu · <LocalizedText value={COPY['common.sample']} /></figcaption></figure>
+    <p class="hero-caption"><LocalizedText value={COPY['hero.caption']} /></p>
   </div>
   <div class="hero-content">
-    <h1>两个人的<br>记忆地图</h1>
-    <p class="opening-years">虚构人物 · 合成内容 · 可自由替换</p>
-    <p class="intro">这里展示一个可以复制、修改和部署的私人记忆站模板。</p>
-    <section class="hero-countdowns" aria-label="纪念日倒计时">
+    <h1><LocalizedText value={SITE_CONFIG.brand.name} /></h1>
+    <p class="opening-years"><LocalizedText value={COPY['hero.synthetic']} /></p>
+    <p class="intro"><LocalizedText value={COPY['hero.intro']} /></p>
+    <section class="hero-countdowns" aria-label={COPY['hero.countdowns'].zh} data-locale-aria-label-zh={COPY['hero.countdowns'].zh} data-locale-aria-label-en={COPY['hero.countdowns'].en}>
       {anniversaries.map(([, anniversary], index) => <article class:list={['hero-countdown', { 'hero-countdown--wedding': index > 0 }]} data-anniversary-countdown data-month={Number(anniversary.date.slice(5, 7))} data-day={Number(anniversary.date.slice(8, 10))} aria-live="polite">
-        <p class="hero-countdown-label">{anniversary.label}</p><time class="hero-countdown-date" data-countdown-date datetime={anniversary.date}>{monthDay(anniversary.date)}</time>
-        <p class="hero-countdown-remaining" data-countdown-remaining><span data-countdown-prefix>还有</span><strong data-countdown-days>—</strong><span data-countdown-unit>天</span></p>
+        <p class="hero-countdown-label"><LocalizedText value={anniversary.label} /></p><time class="hero-countdown-date" data-countdown-date datetime={anniversary.date}>{monthDay(anniversary.date)}</time>
+        <p class="hero-countdown-remaining" data-countdown-remaining><span data-countdown-prefix><LocalizedText value={COPY['common.in']} /></span><strong data-countdown-days>—</strong><span data-countdown-unit><LocalizedText value={COPY['common.days']} /></span></p>
       </article>)}
     </section>
-    <nav class="opening-actions" aria-label="浏览站点">
-      <a class="opening-action opening-action--primary" href="#story-first-walk">浏览精选记忆</a>
-      <a class="opening-action" href="./annual/">年度回顾</a><a class="opening-action" href="./places/">地点地图</a><a class="opening-action" href="./album/#memory-search">搜索相册</a>
+    <nav class="opening-actions" aria-label={COPY['nav.browse'].zh} data-locale-aria-label-zh={COPY['nav.browse'].zh} data-locale-aria-label-en={COPY['nav.browse'].en}>
+      <a class="opening-action opening-action--primary" href="#story-first-walk"><LocalizedText value={COPY['home.browse']} /></a>
+      <a class="opening-action" href="./annual/"><LocalizedText value={COPY['annual.title']} /></a><a class="opening-action" href="./places/"><LocalizedText value={COPY['places.title']} /></a><a class="opening-action" href="./album/#memory-search"><LocalizedText value={COPY['home.searchAlbum']} /></a>
     </nav>
-    <p class="birthdays" aria-label="示例生日">{birthdays.map(([id, birthday]) => <button class="birthday-trigger" type="button" data-birthday={id}>{birthday.name} · {monthDay(birthday.date)}</button>)}</p>
+    <p class="birthdays" aria-label={COPY['common.birthday'].zh} data-locale-aria-label-zh={COPY['common.birthday'].zh} data-locale-aria-label-en={COPY['common.birthday'].en}>{birthdays.map(([id, birthday]) => <button class="birthday-trigger" type="button" data-birthday={id}><LocalizedText value={birthday.name} /> · {monthDay(birthday.date)}</button>)}</p>
     <aside class="today-note" data-today-note role="status" aria-live="polite" hidden><div><p class="today-note-title" data-today-title></p><p class="today-note-message" data-today-message></p></div></aside>
   </div>
-  <a class="hero-scroll-cue" href="#story-first-walk" aria-label="继续浏览"><span>继续浏览</span></a>
+  <a class="hero-scroll-cue" href="#story-first-walk" aria-label={COPY['home.continue'].zh} data-locale-aria-label-zh={COPY['home.continue'].zh} data-locale-aria-label-en={COPY['home.continue'].en}><span><LocalizedText value={COPY['home.continue']} /></span></a>
 </section>

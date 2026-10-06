@@ -1,5 +1,6 @@
 ---
 import OptimizedImage from './OptimizedImage.astro';
+import LocalizedText from './LocalizedText.astro';
 import { memories } from '../data/memories.js';
 import {
   getRelationshipPhase,
@@ -9,6 +10,7 @@ import {
   relationshipPhases,
   relationshipTimelineMemoryIds,
 } from '../data/relationship-timeline.js';
+import { COPY } from '../i18n/copy.js';
 
 const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
 const firstYear = Math.min(...relationshipOrigins.map(({ year }) => year), ...memories.map(({ date }) => Number(date.slice(0, 4))));
@@ -81,17 +83,17 @@ for (const year of milestoneYears) {
 ---
 <section class="journey-page" aria-labelledby="journey-title">
   <header class="journey-intro">
-    <p class="journey-kicker">OUR STORY, FROM THE BEGINNING</p>
-    <h1 id="journey-title">走向彼此</h1>
-    <p>这些年，我们住过不同的城市，也有过很久不联系的时候。后来，我们终于走到了一起。</p>
-    <div class="journey-legend" aria-label="时间线说明">
-      <span><i class="journey-legend-line journey-legend-line--person-a"></i>林岚 · {relationshipOrigins[0].year}</span>
-      <span><i class="journey-legend-line journey-legend-line--person-b"></i>周屿 · {relationshipOrigins[1].year}</span>
+    <p class="journey-kicker"><LocalizedText value={COPY['journey.kicker']} /></p>
+    <h1 id="journey-title"><LocalizedText value={COPY['journey.title']} /></h1>
+    <p><LocalizedText value={COPY['journey.intro']} /></p>
+    <div class="journey-legend" aria-label={COPY['journey.legend'].zh} data-locale-aria-label-zh={COPY['journey.legend'].zh} data-locale-aria-label-en={COPY['journey.legend'].en}>
+      <span><i class="journey-legend-line journey-legend-line--person-a"></i><LocalizedText value={relationshipOrigins[0].person} /> · {relationshipOrigins[0].year}</span>
+      <span><i class="journey-legend-line journey-legend-line--person-b"></i><LocalizedText value={relationshipOrigins[1].person} /> · {relationshipOrigins[1].year}</span>
     </div>
   </header>
 
   <div class="journey-exhibition">
-    <ol class="journey-years" aria-label={`从 ${firstYear} 年到 ${lastYear} 年的共同历程`}>
+    <ol class="journey-years" aria-label={`从 ${firstYear} 年到 ${lastYear} 年的共同历程`} data-locale-aria-label-zh={`从 ${firstYear} 年到 ${lastYear} 年的共同历程`} data-locale-aria-label-en={`Shared journey from ${firstYear} to ${lastYear}`}>
       {timeline.map((item) => item.type === 'gap' ? (
         <li class:list={['journey-gap', { 'journey-gap--collapsed': item.years.length > 1, 'journey-gap--quiet': item.years.length === 1 }]}>
           <div class="journey-track" aria-hidden="true">
@@ -102,8 +104,8 @@ for (const year of milestoneYears) {
           </div>
           {item.years.length > 1 && (
             <details class="journey-gap-details">
-              <summary><strong>{item.phase?.title ?? '继续向前'}</strong><span>展开 {item.years.length} 年</span></summary>
-              <div class="journey-gap-years" aria-label={`${item.startYear} 年至 ${item.endYear} 年的空白年份`}>
+              <summary><strong><LocalizedText value={item.phase?.title ?? COPY['journey.continue']} /></strong><span><LocalizedText value={COPY['journey.expandYears']} values={{ count: item.years.length }} /></span></summary>
+              <div class="journey-gap-years" aria-label={`${item.startYear} 年至 ${item.endYear} 年的空白年份`} data-locale-aria-label-zh={`${item.startYear} 年至 ${item.endYear} 年的空白年份`} data-locale-aria-label-en={`Unlisted years from ${item.startYear} to ${item.endYear}`}>
                 {item.years.map((year) => <span>{year}</span>)}
               </div>
             </details>
@@ -122,16 +124,16 @@ for (const year of milestoneYears) {
             <span class="journey-year-mark">{item.year}</span>
           </div>
           <div class="journey-year-content">
-            {item.origin && <p class="journey-origin">{item.origin.label}<span>{item.origin.person} · {item.origin.year}</span></p>}
-            {item.phase?.startYear === item.year && <p class="journey-phase"><span>{item.phase.startYear}{(item.phase.displayEndYear ?? item.phase.endYear) > item.year ? ` — ${item.phase.displayEndYear ?? item.phase.endYear}` : ''}</span><strong>{item.phase.title}</strong><span>{item.phase.description}</span></p>}
+            {item.origin && <p class="journey-origin"><LocalizedText value={item.origin.label} /><span><LocalizedText value={item.origin.person} /> · {item.origin.year}</span></p>}
+            {item.phase?.startYear === item.year && <p class="journey-phase"><span>{item.phase.startYear}{(item.phase.displayEndYear ?? item.phase.endYear) > item.year ? ` — ${item.phase.displayEndYear ?? item.phase.endYear}` : ''}</span><strong><LocalizedText value={item.phase.title} /></strong><span><LocalizedText value={item.phase.description} /></span></p>}
             {item.locations.map((location) => (
-              <div class="journey-location" role="group" aria-label={`${location.period}居住地点`}>
-                <span class="journey-location-period">{location.period}</span>
+              <div class="journey-location" role="group" aria-label={`${location.period.zh}居住地点`} data-locale-aria-label-zh={`${location.period.zh}居住地点`} data-locale-aria-label-en={`${location.period.en} places lived`}>
+                <span class="journey-location-period"><LocalizedText value={location.period} /></span>
                 <div class="journey-location-people">
-                  <span class="journey-location-person"><i class="journey-location-swatch journey-location-swatch--person-b" aria-hidden="true"></i>林岚 · {location.personA}</span>
-                  <span class="journey-location-person"><i class="journey-location-swatch journey-location-swatch--person-a" aria-hidden="true"></i>周屿 · {location.personB}</span>
+                  <span class="journey-location-person"><i class="journey-location-swatch journey-location-swatch--person-b" aria-hidden="true"></i><LocalizedText value={relationshipOrigins[0].person} /> · <LocalizedText value={location.personA} /></span>
+                  <span class="journey-location-person"><i class="journey-location-swatch journey-location-swatch--person-a" aria-hidden="true"></i><LocalizedText value={relationshipOrigins[1].person} /> · <LocalizedText value={location.personB} /></span>
                 </div>
-                {location.note && <span class="journey-location-note">{location.note}</span>}
+                {location.note && <span class="journey-location-note"><LocalizedText value={location.note} /></span>}
               </div>
             ))}
             {item.memories.length > 0 && (
@@ -139,7 +141,7 @@ for (const year of milestoneYears) {
                 {item.memories.map((memory) => (
                   <a class="journey-memory" href={`${siteBase}album/#memory-${memory.id}`}>
                     <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
-                    <span class="journey-memory-copy"><time>{memory.date}</time><strong>{memory.title}</strong><span>{memory.description}</span></span>
+                    <span class="journey-memory-copy"><time>{memory.date}</time><strong><LocalizedText value={memory.title} /></strong><span><LocalizedText value={memory.description} /></span></span>
                   </a>
                 ))}
               </div>
@@ -149,5 +151,5 @@ for (const year of milestoneYears) {
       ))}
     </ol>
   </div>
-  <p class="journey-ending">这段虚构示例时间线可以替换为你自己的重要阶段和共同经历。</p>
+  <p class="journey-ending"><LocalizedText value={COPY['journey.ending']} /></p>
 </section>

@@ -8,20 +8,20 @@ const freeze = (value) => {
 
 export const SITE_CONFIG = freeze({
   brand: {
-    name: '两个人的记忆地图',
-    description: '一份关于林岚和周屿的虚构纪念册示例。',
+    name: { zh: '两个人的记忆地图', en: 'A Memory Atlas for Two' },
+    description: { zh: '一份关于林岚和周屿的虚构纪念册示例。', en: 'A fictional memory-book demo about Lin Lan and Zhou Yu.' },
   },
   siteUrl: '',
   basePath: '/',
   locale: 'zh-CN',
   timeZone: 'Asia/Shanghai',
   anniversaries: {
-    love: { date: '2022-06-18', startAt: '2022-06-18T00:00:00+08:00', label: '相识纪念日' },
-    wedding: { date: '2024-09-21', startAt: '2024-09-21T00:00:00+08:00', label: '庆祝日' },
+    love: { date: '2022-06-18', startAt: '2022-06-18T00:00:00+08:00', label: { zh: '相识纪念日', en: 'First Meeting Anniversary' } },
+    wedding: { date: '2024-09-21', startAt: '2024-09-21T00:00:00+08:00', label: { zh: '庆祝日', en: 'Celebration Day' } },
   },
   birthdays: {
-    one: { name: '林岚', date: '03-14' },
-    two: { name: '周屿', date: '11-02' },
+    one: { name: { zh: '林岚', en: 'Lin Lan' }, date: '03-14' },
+    two: { name: { zh: '周屿', en: 'Zhou Yu' }, date: '11-02' },
   },
   debugPanel: true,
 });
