@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "astro": "7.3.5",
-    "jsdom": "26.1.0"
+    "jsdom": "30.1.1"
   }
 }
