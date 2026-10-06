@@ -8,7 +8,7 @@ A starter for a personal memory site you can copy, customize, and deploy. The de
 
 ![English mobile preview of the fictional memory atlas demo](docs/images/home-demo-mobile-en.png)
 
-**Live demo:** <https://liyuk.github.io/astro-memory-atlas/>
+**Live demo:** <https://liyuk.com/astro-memory-atlas/>
 
 ## Quick start
 

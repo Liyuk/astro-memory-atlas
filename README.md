@@ -8,7 +8,7 @@
 
 ![虚构记忆地图的手机预览](docs/images/home-demo-mobile.png)
 
-**在线演示：** <https://liyuk.github.io/astro-memory-atlas/>
+**在线演示：** <https://liyuk.com/astro-memory-atlas/>
 
 ## 快速开始
 
