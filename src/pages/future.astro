@@ -1,0 +1,14 @@
+---
+import SharedWishes from '../components/SharedWishes.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { SITE_CONFIG } from '../config/site.js';
+import '../styles/shared-wishes.css';
+---
+<SiteLayout
+  title={`以后一起 · ${SITE_CONFIG.brand.name}`}
+  description="浏览并编辑这份虚构示例中的未来愿望清单。"
+  current="future"
+>
+  <a class="skip-link" href="#shared-wishes">跳到以后一起</a>
+  <SharedWishes />
+</SiteLayout>

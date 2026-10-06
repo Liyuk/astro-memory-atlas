@@ -1,0 +1,42 @@
+---
+import IconSprite from '../components/home/IconSprite.astro';
+import SiteNavigation from '../components/SiteNavigation.astro';
+import SiteDebugPanel from '../components/SiteDebugPanel.astro';
+import { SITE_CONFIG } from '../config/site.js';
+import '../styles/shared.css';
+
+interface Props {
+  title: string;
+  description: string;
+  themeColor?: string;
+  current?: 'story' | 'journey' | 'album' | 'annual' | 'places' | 'future';
+  baseHref?: string;
+  bodyClass?: string;
+}
+
+const { title, description = SITE_CONFIG.brand.description, themeColor = '#f4efe5', current = 'story', baseHref, bodyClass } = Astro.props;
+const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
+const routePaths = { story: '', journey: 'journey/', album: 'album/', annual: 'annual/', places: 'places/', future: 'future/' };
+const canonicalUrl = SITE_CONFIG.siteUrl ? new URL(`${siteBase}${routePaths[current] ?? ''}`, SITE_CONFIG.siteUrl).href : null;
+---
+<!doctype html>
+<html lang={SITE_CONFIG.locale}>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content={themeColor}>
+    <meta name="description" content={description}>
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl}>}
+    <link rel="icon" type="image/svg+xml" href={`${siteBase}favicon.svg`}>
+    {baseHref && <base href={baseHref} />}
+    <title>{title}</title>
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <SiteNavigation current={current} />
+    <IconSprite />
+    <slot />
+    <SiteDebugPanel current={current} />
+    <script>import '../scripts/site-debug.js';</script>
+  </body>
+</html>

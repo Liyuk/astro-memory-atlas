@@ -1,0 +1,32 @@
+---
+import { getImage, Image } from 'astro:assets';
+import { getAlbumImageOptions, resolveAlbumImage } from '../lib/image-assets.js';
+
+const { src, alt = '', fullSizeForViewer = false, ...attributes } = Astro.props;
+const image = resolveAlbumImage(src);
+const imagePath = String(src);
+const imageClassList = String(attributes.class ?? '').split(/\s+/);
+let imageOptions = getAlbumImageOptions(image);
+if (imagePath.includes('/demo/')) {
+  imageOptions = getAlbumImageOptions(image, { width: 128, widths: [128, 256], sizes: '128px' });
+} else if (imagePath.includes('/cover/')) {
+  imageOptions = getAlbumImageOptions(image, { width: 340, sizes: '340px' });
+} else if (imageClassList.includes('memory-image-frame__image')) {
+  imageOptions = getAlbumImageOptions(image, { width: 760, sizes: '760px' });
+}
+const viewerImage = fullSizeForViewer
+  ? await getImage({ src: image, format: 'webp', quality: 85, width: Math.min(image.width, 2048) })
+  : null;
+---
+
+<Image
+  src={image}
+  alt={alt}
+  {...imageOptions}
+  {...attributes}
+  {...(viewerImage ? {
+    'data-pswp-src': viewerImage.src,
+    'data-pswp-width': viewerImage.attributes.width,
+    'data-pswp-height': viewerImage.attributes.height,
+  } : {})}
+/>

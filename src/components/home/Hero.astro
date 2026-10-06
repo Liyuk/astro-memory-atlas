@@ -1,0 +1,31 @@
+---
+import OptimizedImage from '../OptimizedImage.astro';
+import { SITE_CONFIG } from '../../config/site.js';
+const anniversaries = Object.entries(SITE_CONFIG.anniversaries);
+const birthdays = Object.entries(SITE_CONFIG.birthdays);
+const monthDay = (date) => (date.length === 10 ? date.slice(5) : date).replace('-', '.');
+---
+<section class="hero" id="opening" aria-label="虚构纪念册示例">
+  <div class="hero-art">
+    <figure><div class="cover-image-stack"><OptimizedImage src="./assets/images/demo/river.svg" alt="夕阳下两个人沿着河岸散步的抽象插画" fetchpriority="high" decoding="async" /></div><figcaption class="photo-note">林岚 &amp; 周屿 · 虚构示例</figcaption></figure>
+    <p class="hero-caption">把日常收进地图，<br><em>让回忆慢慢发光。</em></p>
+  </div>
+  <div class="hero-content">
+    <h1>两个人的<br>记忆地图</h1>
+    <p class="opening-years">虚构人物 · 合成内容 · 可自由替换</p>
+    <p class="intro">这里展示一个可以复制、修改和部署的私人记忆站模板。</p>
+    <section class="hero-countdowns" aria-label="纪念日倒计时">
+      {anniversaries.map(([, anniversary], index) => <article class:list={['hero-countdown', { 'hero-countdown--wedding': index > 0 }]} data-anniversary-countdown data-month={Number(anniversary.date.slice(5, 7))} data-day={Number(anniversary.date.slice(8, 10))} aria-live="polite">
+        <p class="hero-countdown-label">{anniversary.label}</p><time class="hero-countdown-date" data-countdown-date datetime={anniversary.date}>{monthDay(anniversary.date)}</time>
+        <p class="hero-countdown-remaining" data-countdown-remaining><span data-countdown-prefix>还有</span><strong data-countdown-days>—</strong><span data-countdown-unit>天</span></p>
+      </article>)}
+    </section>
+    <nav class="opening-actions" aria-label="浏览站点">
+      <a class="opening-action opening-action--primary" href="#story-first-walk">浏览精选记忆</a>
+      <a class="opening-action" href="./annual/">年度回顾</a><a class="opening-action" href="./places/">地点地图</a><a class="opening-action" href="./album/#memory-search">搜索相册</a>
+    </nav>
+    <p class="birthdays" aria-label="示例生日">{birthdays.map(([id, birthday]) => <button class="birthday-trigger" type="button" data-birthday={id}>{birthday.name} · {monthDay(birthday.date)}</button>)}</p>
+    <aside class="today-note" data-today-note role="status" aria-live="polite" hidden><div><p class="today-note-title" data-today-title></p><p class="today-note-message" data-today-message></p></div></aside>
+  </div>
+  <a class="hero-scroll-cue" href="#story-first-walk" aria-label="继续浏览"><span>继续浏览</span></a>
+</section>

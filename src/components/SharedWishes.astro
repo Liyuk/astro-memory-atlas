@@ -1,0 +1,35 @@
+---
+import { sharedWishCategories, sharedWishes } from '../data/shared-wishes.js';
+const wishesByCategory = new Map(sharedWishCategories.map(({ id }) => [id, sharedWishes.filter((wish) => wish.category === id)]));
+---
+<main class="wishes-page" id="shared-wishes">
+  <header class="wishes-intro">
+    <p class="wishes-kicker">THINGS I WANT TO DO WITH YOU</p>
+    <h1>以后一起</h1>
+    <p>一个可以编辑的示例清单，记录以后想一起完成的事。</p>
+  </header>
+
+  <div class="wishes-sections">
+    {sharedWishCategories.map(({ id, title, eyebrow, description }) => (
+      <section class={`wishes-section wishes-section--${id}`} aria-labelledby={`wishes-${id}`}>
+        <header class="wishes-section-heading">
+          <p>{eyebrow}</p>
+          <h2 id={`wishes-${id}`}>{title}</h2>
+          <span>{description}</span>
+        </header>
+        <ul class="wish-list">
+          {(wishesByCategory.get(id) ?? []).map(({ id: wishId, title: wishTitle }, index) => (
+            <li class="wish-item" data-wish-id={wishId}>
+              <span class="wish-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <span>{wishTitle}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+
+  <footer class="wishes-footer">
+    <p>替换这些示例愿望，写下你自己的计划。</p>
+  </footer>
+</main>

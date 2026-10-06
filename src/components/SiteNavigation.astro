@@ -1,0 +1,37 @@
+---
+const { current = 'story' } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const links = [
+  { id: 'story', href: `${base}#opening`, label: '我们的故事' },
+  { id: 'journey', href: `${base}journey/`, label: '走向彼此' },
+  { id: 'album', href: `${base}album/#memory-search`, label: '完整相册' },
+  { id: 'annual', href: `${base}annual/`, label: '年度回顾' },
+  { id: 'places', href: `${base}places/`, label: '地图足迹' },
+  { id: 'future', href: `${base}future/`, label: '以后一起' },
+];
+---
+<nav class="site-navigation" aria-label="站点导航">
+  <a class="site-navigation-name" href={`${base}#opening`}>记忆地图</a>
+  <div class="site-navigation-links" tabindex="0" aria-label="浏览站点页面">
+    {links.map(({ id, href, label }) => (
+      <a href={href} aria-current={current === id ? 'page' : undefined}>{label}</a>
+    ))}
+  </div>
+</nav>
+<script>
+  const navigation = document.querySelector<HTMLElement>('.site-navigation');
+  const updateNavigationSurface = () => {
+    navigation?.classList.toggle('site-navigation--scrolled', window.scrollY > 32);
+  };
+  updateNavigationSurface();
+  window.addEventListener('scroll', updateNavigationSurface, { passive: true });
+
+  const currentLink = document.querySelector<HTMLElement>('.site-navigation-links [aria-current="page"]');
+  const links = currentLink?.parentElement;
+  if (currentLink && links instanceof HTMLElement) {
+    const linkBounds = currentLink.getBoundingClientRect();
+    const stripBounds = links.getBoundingClientRect();
+    const alreadyVisible = linkBounds.left >= stripBounds.left && linkBounds.right <= stripBounds.right;
+    if (!alreadyVisible) currentLink.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+</script>

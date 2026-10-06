@@ -1,0 +1,22 @@
+---
+import MemoryArchive from '../../components/home/MemoryArchive.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { SITE_CONFIG } from '../../config/site.js';
+import '../../styles/home.css';
+const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
+---
+<SiteLayout
+  title={`我们的完整相册 · ${SITE_CONFIG.brand.name}`}
+  description="按日期和地点浏览虚构示例记忆。"
+  themeColor="#f5eee4"
+  current="album"
+  baseHref={siteBase}
+>
+  <main class="page album-page">
+    <p class="album-back"><a class="scene-link" href={siteBase}>回到我们的故事</a></p>
+    <MemoryArchive />
+  </main>
+  <script>
+    import '../../scripts/album.js';
+  </script>
+</SiteLayout>

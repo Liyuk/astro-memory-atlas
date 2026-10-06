@@ -1,0 +1,19 @@
+---
+import OptimizedImage from '../OptimizedImage.astro';
+import { SITE_CONFIG } from '../../config/site.js';
+import { memories, getMemoryById } from '../../data/memories.js';
+const featured = ['first-walk', 'garden-picnic', 'small-celebration'].map(getMemoryById);
+const { love, wedding } = SITE_CONFIG.anniversaries;
+const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
+---
+<div class="story-film" aria-label="虚构示例故事">
+  {featured.map((memory, index) => <section class="story-scene" id={index === 0 ? 'story-first-walk' : `story-${memory.id}`} aria-labelledby={`story-${memory.id}-title`}>
+    <div class="scene-copy"><p class="scene-date">{memory.date}</p><h2 id={`story-${memory.id}-title`}>{memory.title}</h2><p>{memory.description}</p>
+      {index === 0 && <section class="anniversary-card" aria-labelledby="love-title"><p class="date-label">示例纪念日</p><h3 id="love-title">{love.label}</h3><time class="anniversary-date" datetime={love.date}>{love.date.replaceAll('-', '.')}</time><div class="timer" aria-label="相识时长" data-start={love.startAt}><div class="time-unit"><strong class="time-value" data-unit="days">0</strong><small>天</small></div><div class="time-unit"><strong class="time-value" data-unit="hours">00</strong><small>小时</small></div><div class="time-unit"><strong class="time-value" data-unit="minutes">00</strong><small>分钟</small></div><div class="time-unit"><strong class="time-value" data-unit="seconds">00</strong><small>秒</small></div></div><button class="anniversary-replay" type="button" data-anniversary-open="love">重看这段回忆</button></section>}
+      {index === 1 && <section class="anniversary-card anniversary-card--wedding"><p class="date-label">示例日期</p><h3>{wedding.label}</h3><time class="anniversary-date" datetime={wedding.date}>{wedding.date.replaceAll('-', '.')}</time><button class="anniversary-replay" type="button" data-anniversary-open="wedding">重看这段回忆</button></section>}
+      <a class="scene-link" href={`${siteBase}album/#memory-${memory.id}`}>在相册中查看 <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+    </div>
+    <button class="scene-photo memory-image-hover" type="button" data-story-memory={memory.title} aria-label={`打开${memory.title}`}><OptimizedImage class="memory-image-frame__image" src={`./assets/images/${memory.image}`} alt={memory.alt} loading={index === 0 ? undefined : 'lazy'} decoding="async" /><span class="scene-photo-caption">{memory.place || '一段虚构记忆'}</span></button>
+  </section>)}
+  <p class="journey-ending">以上人物、日期、地点与记忆均为虚构示例，请替换为自己的内容。</p>
+</div>

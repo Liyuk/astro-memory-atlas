@@ -1,0 +1,24 @@
+---
+import Hero from '../components/home/Hero.astro';
+import StoryFilm from '../components/home/StoryFilm.astro';
+import FeaturedMemories from '../components/home/FeaturedMemories.astro';
+import HomeOverlays from '../components/home/HomeOverlays.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { SITE_CONFIG } from '../config/site.js';
+import '../styles/home.css';
+---
+<SiteLayout
+  title={SITE_CONFIG.brand.name}
+  description={SITE_CONFIG.brand.description}
+  current="story"
+>
+  <main class="page">
+    <Hero />
+    <StoryFilm />
+    <FeaturedMemories />
+    <HomeOverlays />
+  </main>
+  <script>
+    import '../scripts/home.js';
+  </script>
+</SiteLayout>

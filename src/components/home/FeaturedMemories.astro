@@ -1,0 +1,29 @@
+---
+import OptimizedImage from '../OptimizedImage.astro';
+import { getMemoryById } from '../../data/memories.js';
+
+const featuredMemoryIds = ['paper-lanterns', 'mountain-train', 'winter-market'];
+const memories = featuredMemoryIds.map((id) => {
+  const memory = getMemoryById(id);
+  if (!memory) throw new Error(`Featured memory "${id}" was not found.`);
+  return memory;
+});
+const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
+---
+<section class="featured-memories" aria-labelledby="featured-memories-title">
+  <header class="featured-memories-heading">
+    <div><p class="section-kicker">故事之外</p><h2 id="featured-memories-title">还有这些同行的日子</h2></div>
+    <p>把散步、远行和普通的日子放进同一本相册。</p>
+    <a class="scene-link" href={`${siteBase}album/`}>打开完整相册 <svg class="icon" aria-hidden="true"><use href="#icon-arrow-up-right"></use></svg></a>
+  </header>
+  <div class="featured-memories-grid">
+    {memories.map((memory) => (
+      <article class="featured-memory memory-entry">
+        <button type="button" class="featured-memory-photo memory-image-frame memory-image-hover" data-story-memory={memory.title} aria-label={`放大查看：${memory.title}`}>
+          <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
+        </button>
+        <div class="featured-memory-copy memory-entry-copy"><p class="timeline-date">{memory.date}</p><h3>{memory.title}</h3></div>
+      </article>
+    ))}
+  </div>
+</section>

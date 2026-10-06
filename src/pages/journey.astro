@@ -1,0 +1,16 @@
+---
+import JourneyTimeline from '../components/JourneyTimeline.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { SITE_CONFIG } from '../config/site.js';
+import '../styles/journey-timeline.css';
+---
+<SiteLayout
+  title={`走向彼此 · ${SITE_CONFIG.brand.name}`}
+  description="浏览林岚和周屿这份虚构示例中的关系阶段和共同记忆。"
+  current="journey"
+>
+  <a class="skip-link" href="#journey-title">跳到时间线</a>
+  <main class="journey-shell">
+    <JourneyTimeline />
+  </main>
+</SiteLayout>

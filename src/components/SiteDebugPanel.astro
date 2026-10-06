@@ -1,0 +1,26 @@
+---
+import { SITE_CONFIG } from '../config/site.js';
+const { current = 'story' } = Astro.props;
+const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
+const pageNames = { story: '首页', journey: '时间线', album: '相册', annual: '年度回顾', places: '地点地图', future: '未来清单' };
+const pages = [['', '首页'], ['journey/', '时间线'], ['album/', '相册'], ['annual/', '年度回顾'], ['places/', '地点地图'], ['future/', '未来清单']];
+---
+{SITE_CONFIG.debugPanel && <>
+  <button class="debug-launcher" type="button" data-debug-launcher aria-controls="site-debug-panel" aria-expanded="false" hidden>打开示例工具</button>
+  <aside class="debug-panel" id="site-debug-panel" aria-label="示例站点调试工具" data-debug-panel data-current-page={current} data-site-base={siteBase}>
+    <div class="debug-panel-head"><div><h2 class="debug-panel-title">示例调试面板</h2><p class="debug-panel-note">当前页面：{pageNames[current] ?? current}</p></div><button class="debug-panel-close" type="button" data-debug-close aria-label="折叠调试面板" aria-expanded="true"><svg class="icon"><use href="#icon-x"></use></svg></button></div>
+    <section class="debug-panel-section"><h3>日期模拟</h3><label class="debug-panel-note" for="debug-datetime">按站点时区选择日期和时间</label><input id="debug-datetime" type="datetime-local" data-debug-datetime><div class="debug-button-grid">
+      <button class="debug-button" type="button" data-debug-apply-time>应用日期</button><button class="debug-button" type="button" data-debug-reset-time>恢复当前时间</button>
+      <button class="debug-button" type="button" data-debug-preset="love">相识纪念日</button><button class="debug-button" type="button" data-debug-preset="wedding">庆祝日</button>
+      {Object.entries(SITE_CONFIG.birthdays).map(([id, person]) => <button class="debug-button" type="button" data-debug-preset={id}>{person.name}生日</button>)}
+    </div></section>
+    <section class="debug-panel-section"><h3>当前页操作</h3><div class="debug-button-grid">
+      {current === 'story' && <><button class="debug-button" type="button" data-debug-action="open-love">查看相识纪念日</button><button class="debug-button" type="button" data-debug-action="open-wedding">查看庆祝日</button><button class="debug-button" type="button" data-debug-action="birthday-one">预览生日祝福</button></>}
+      {current === 'album' && <><button class="debug-button" type="button" data-debug-action="filter-latest">筛选最近年份</button><button class="debug-button" type="button" data-debug-action="clear-filter">清除筛选</button><button class="debug-button" type="button" data-debug-action="album-open-image">打开图片查看器</button></>}
+      {current === 'places' && <><button class="debug-button" type="button" data-debug-action="map-first-location">选择第一个地点</button><button class="debug-button" type="button" data-debug-action="map-overview">显示全部足迹</button><button class="debug-button" type="button" data-debug-action="map-open-photo">打开地点照片</button></>}
+      <button class="debug-button" type="button" data-debug-run-audit>巡检页面结构</button>
+    </div></section>
+    <nav class="debug-panel-section" aria-label="页面跳转"><h3>页面导航</h3><div class="debug-button-grid">{pages.map(([path, label]) => <button class="debug-button" type="button" data-debug-page={path}>{label}</button>)}</div></nav>
+    <p class="debug-panel-status" data-debug-status role="status" aria-live="polite"></p>
+  </aside>
+</>}

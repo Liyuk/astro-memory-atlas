@@ -1,0 +1,21 @@
+import { mountMemoryAtlas, memoriesFromIndex } from '../../places/map.js';
+import { createMemoryImageViewer } from './memory-image-viewer.js';
+import { atlasData } from '../../places/data.js';
+
+const root = document.querySelector('#memory-atlas');
+const imageViewer = createMemoryImageViewer();
+const siteBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+
+try {
+  const data = {
+    ...atlasData,
+    baseUrl: siteBase,
+    memories: memoriesFromIndex(document, atlasData.memories),
+  };
+  const destroy = mountMemoryAtlas(root, data, window.L, {
+    openPhoto: (memories, index, opener) => imageViewer.open(memories, index, opener),
+  });
+  window.addEventListener('pagehide', destroy, { once: true });
+} catch {
+  document.querySelector('#atlas-viewer').textContent = '相册暂时无法载入，请稍后重试。';
+}

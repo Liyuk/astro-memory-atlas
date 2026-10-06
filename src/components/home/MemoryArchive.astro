@@ -1,0 +1,72 @@
+---
+import OptimizedImage from '../OptimizedImage.astro';
+import { memories } from '../../data/memories.js';
+---
+<section class="story memory-archive" id="memory-album" aria-labelledby="story-title">
+  <header class="story-heading">
+    <div>
+      <p class="section-kicker">虚构示例</p>
+      <h2 id="story-title">把记忆放进相册里</h2>
+    </div>
+    <p class="story-copy">示例内容可按你的故事自由替换</p>
+    <aside class="memory-nudge" aria-label="今天翻到的一段回忆">
+      <p class="memory-nudge-label">今天翻到</p>
+      <p class="memory-nudge-memory"><strong data-memory-title>正在翻找一段回忆…</strong><span class="memory-nudge-date" data-memory-date></span></p>
+      <button class="memory-nudge-button" type="button" data-memory-jump>翻到这一页 <span aria-hidden="true"><svg class="icon"><use href="#icon-arrow-up-right"></use></svg></span></button>
+    </aside>
+  </header>
+
+  <div class="memory-book">
+    <div class="book-topline"><span>完整相册</span><span>示例记忆</span></div>
+    <nav class="chapter-nav" aria-label="跳转到相册章节">
+      <button class="chapter-button" type="button" data-chapter="2022" aria-pressed="false">初见 · 2022</button>
+      <button class="chapter-button" type="button" data-chapter="2023" aria-pressed="false">一起探索 · 2023</button>
+      <button class="chapter-button" type="button" data-chapter="2024" aria-pressed="false">共享日常 · 2024</button>
+      <button class="chapter-button" type="button" data-chapter="2025" aria-pressed="false">周末片段 · 2025</button>
+    </nav>
+    <div class="memory-tools" id="memory-search" role="search" aria-label="搜索故事相册">
+      <label class="memory-tool">关键词
+        <input type="search" data-memory-search placeholder="搜索标题、地点或故事" autocomplete="off">
+      </label>
+      <label class="memory-tool">年份
+        <span class="select-control">
+          <select data-memory-year aria-label="按年份筛选故事">
+            <option value="">所有年份</option>
+          </select>
+          <svg class="icon select-control__icon" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
+        </span>
+      </label>
+    </div>
+    <p class="memory-filter-summary" data-memory-filter-summary aria-live="polite"></p>
+    <div class="album-reading-tools" aria-label="相册阅读方式">
+      <button class="album-reading-toggle" type="button" data-album-page-toggle aria-pressed="false">开始翻页阅读</button>
+      <div class="album-turn-controls" data-album-turn-controls hidden>
+        <button class="album-turn-button" type="button" data-album-previous aria-label="上一页"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg></button>
+        <span class="album-turn-progress" data-album-progress aria-live="polite">1 / {memories.length}</span>
+        <button class="album-turn-button" type="button" data-album-next aria-label="下一页"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></button>
+      </div>
+    </div>
+    <div class="book-spread" role="region" aria-label="我们的故事相册" tabindex="0">
+      {memories.map((memory, index) => (
+        <article class={index === 0 ? 'memory-entry is-active' : 'memory-entry'} id={`memory-${memory.id}`}>
+          <div class="memory-page-layout">
+            <div class="memory-entry-art memory-image-frame memory-image-hover">
+              <OptimizedImage fullSizeForViewer src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
+              {memory.flags?.includes('family-easter-trigger') && (
+                <button class="family-easter-trigger" type="button" data-family-easter-trigger aria-label="查看神奇版本的全家福" title="一张神奇版本的全家福"><svg class="icon"><use href="#icon-sparkles"></use></svg></button>
+              )}
+            </div>
+            <div class="memory-entry-copy">
+              <p class="timeline-date">{memory.date}</p>
+              <h3>{memory.title}</h3>
+              <p>{memory.description}</p>
+              {memory.place && <p class="place">{memory.place}</p>}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+    <p class="memory-filter-empty" data-memory-filter-empty role="status" hidden>没有找到这段回忆，试试别的关键词或年份。</p>
+  </div>
+  <p class="closing-note">以上内容是虚构示例；把它们替换成你愿意珍藏的故事。</p>
+</section>
