@@ -4,9 +4,9 @@ A starter for a personal memory site you can copy, customize, and deploy. The de
 
 **中文：** [README.md](README.md)
 
-![Homepage of the fictional memory atlas demo](docs/images/home-demo.png)
+![English homepage of the fictional memory atlas demo](docs/images/home-demo-en.png)
 
-![Mobile preview of the fictional memory atlas demo](docs/images/home-demo-mobile.png)
+![English mobile preview of the fictional memory atlas demo](docs/images/home-demo-mobile-en.png)
 
 **Live demo:** <https://liyuk.github.io/astro-memory-atlas/>
 
