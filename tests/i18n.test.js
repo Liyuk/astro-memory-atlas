@@ -9,7 +9,7 @@ test('localized content selects the requested language and falls back safely', (
   const copy = { zh: '记忆地图', en: 'Memory Atlas' };
   assert.equal(localize(copy, 'zh'), '记忆地图');
   assert.equal(localize(copy, 'en'), 'Memory Atlas');
-  assert.equal(localize(copy, 'fr'), '记忆地图');
+  assert.equal(localize(copy, 'fr'), 'Memory Atlas');
 });
 
 test('sample memories have Chinese and English copy for every reader-facing field', () => {
@@ -36,6 +36,13 @@ test('language controller restores, applies, and persists the selected language'
   assert.equal(controller.getLanguage(), 'en');
   assert.equal(dom.window.document.documentElement.dataset.language, 'en');
   assert.equal(dom.window.document.documentElement.lang, 'en');
+
+  const fresh = new JSDOM('<html><body><button data-language-choice="zh"></button><button data-language-choice="en"></button></body></html>');
+  const unset = { getItem: () => null, setItem: () => {} };
+  const defaults = createLanguageController(fresh.window.document, unset);
+  assert.equal(defaults.getLanguage(), 'en');
+  assert.equal(fresh.window.document.documentElement.lang, 'en');
+  assert.equal(fresh.window.document.querySelector('[data-language-choice="en"]').getAttribute('aria-pressed'), 'true');
 
   controller.setLanguage('zh');
   assert.equal(dom.window.document.documentElement.lang, 'zh-CN');

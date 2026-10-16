@@ -2,6 +2,7 @@ import { mountMemoryAtlas, memoriesFromIndex } from '../../places/map.js';
 import { createMemoryImageViewer } from './memory-image-viewer.js';
 import { atlasData } from '../../places/data.js';
 import { text } from '../i18n/copy.js';
+import { activeLanguage } from '../lib/i18n.js';
 
 const root = document.querySelector('[data-memory-atlas]');
 const imageViewer = createMemoryImageViewer();
@@ -18,5 +19,5 @@ try {
   });
   window.addEventListener('pagehide', destroy, { once: true });
 } catch {
-  document.querySelector('#atlas-viewer').textContent = text('places.unavailable', document.documentElement.dataset.language ?? 'zh');
+  document.querySelector('#atlas-viewer').textContent = text('places.unavailable', activeLanguage());
 }

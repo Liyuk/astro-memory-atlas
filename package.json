@@ -15,6 +15,7 @@
     "test": "node --test",
     "validate": "node scripts/validate-content.js",
     "audit:public": "node scripts/audit-public-content.js",
+    "check:font": "python3 scripts/subset-font.py --check",
     "build:places": "node scripts/build-places-index.js"
   },
   "dependencies": {

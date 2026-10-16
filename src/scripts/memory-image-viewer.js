@@ -1,4 +1,4 @@
-import { localize } from '../lib/i18n.js';
+import { activeLanguage, localize } from '../lib/i18n.js';
 import { text } from '../i18n/copy.js';
 import 'photoswipe/style.css';
 import '../styles/memory-viewer.css';
@@ -26,7 +26,7 @@ export function createMemoryImageViewer({ loadPhotoSwipe = () => import('photosw
     activeCaption.append(date, title, description, place);
   }
 
-  const language = () => documentRef.documentElement.dataset.language ?? 'zh';
+  const language = () => activeLanguage(documentRef.documentElement);
   const photoData = (memory, itemIndex, index, thumbnail) => ({
     src: memory.src,
     element: itemIndex === index && thumbnail ? thumbnail : memory.element ?? null,

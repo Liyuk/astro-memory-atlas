@@ -34,13 +34,13 @@ npm run preview
 - Shared interface copy lives in `src/i18n/copy.js`. Add both Chinese and English text for every new user-facing string.
 - Replace the sample illustrations in `src/assets/images/demo/` with your own artwork or photos, then update the image paths and alt text in the memory data.
 
-Use the “中文 / EN” buttons in the top navigation to switch languages. The selection is saved in the current browser; new visitors see Chinese by default. To hide the sample debug panel, set `debugPanel` to `false` in `src/config/site.js`.
+Use the “EN / 中文” buttons in the top navigation to switch languages. The selection is saved in the current browser. With no saved choice, the page, title, and share metadata are English, and Chinese remains one tap away. To hide the sample debug panel, set `debugPanel` to `false` in `src/config/site.js`.
 
 `npm run validate` checks dates, unique IDs, data references, and that both language versions are present. The production build runs this validation automatically.
 
 ## Pages and features
 
-The starter has six areas: a home page, memory album, relationship timeline, annual recaps, places map, and future wishes. The album supports keyword search, year filtering, page-turn reading, and an image viewer. The map uses the locally bundled Leaflet files and original illustrated maps; it does not request online map tiles or external fonts. The Chinese font is self-hosted in two slices: pages preload the characters used by the sample, and the remaining GB2312 characters download only when new copy needs them.
+The starter has six areas: a home page, memory album, relationship timeline, annual recaps, places map, and future wishes. The album supports keyword search, year filtering, page-turn reading, and an image viewer. The map uses the locally bundled Leaflet files and original illustrated maps; it does not request online map tiles or external fonts. The Chinese font is self-hosted in two slices: pages preload the characters used by the sample, and the remaining GB2312 characters download only when new copy needs them. After adding copy, run `python3 scripts/subset-font.py`; the tests fail if those characters would pull in the larger file. The sample scenes are original illustrations made for this template, not photographs of real people.
 
 The sample debug panel is expanded by default on every page. It can simulate dates, preview anniversaries and birthdays, exercise album and map interactions, and audit all six routes.
 

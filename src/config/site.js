@@ -13,7 +13,7 @@ export const SITE_CONFIG = freeze({
   },
   siteUrl: '',
   basePath: '/',
-  locale: 'zh-CN',
+  locale: 'en',
   timeZone: 'Asia/Shanghai',
   anniversaries: {
     love: { date: '2022-06-18', startAt: '2022-06-18T00:00:00+08:00', label: { zh: '相识纪念日', en: 'First Meeting Anniversary' } },

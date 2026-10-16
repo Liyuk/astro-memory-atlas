@@ -57,7 +57,7 @@ const fallbackMemoryLinks = fallbackMarkup.replace(/<img\b([^>]*?)src="[^"]*asse
   <link slot="head" rel="stylesheet" href={`${siteBase}places/vendor/MarkerCluster.css`}>
   <link slot="head" rel="stylesheet" href={`${siteBase}places/map.css`}>
   <header class="atlas-header">
-    <a class="back-link" href={siteBase} aria-label={COPY['places.backHome'].zh} data-locale-aria-label-zh={COPY['places.backHome'].zh} data-locale-aria-label-en={COPY['places.backHome'].en}><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"/></svg><span><LocalizedText value={COPY['places.backHome']} /></span></a>
+    <a class="back-link" href={siteBase} aria-label={COPY['places.backHome'].en} data-locale-aria-label-zh={COPY['places.backHome'].zh} data-locale-aria-label-en={COPY['places.backHome'].en}><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"/></svg><span><LocalizedText value={COPY['places.backHome']} /></span></a>
     <h1><LocalizedText value={COPY['places.heading']} /></h1>
     <p class="atlas-intro"><LocalizedText value={COPY['places.intro']} /></p>
   </header>
@@ -72,7 +72,7 @@ const fallbackMemoryLinks = fallbackMarkup.replace(/<img\b([^>]*?)src="[^"]*asse
           <span><LocalizedText value={COPY['places.byArea']} /></span>
           <span class="select-control">
             <select id="atlas-location-picker" data-atlas-location>
-              <option value="" data-locale-option-zh={COPY['places.choose'].zh} data-locale-option-en={COPY['places.choose'].en}>{COPY['places.choose'].zh}</option>
+              <option value="" data-locale-option-zh={COPY['places.choose'].zh} data-locale-option-en={COPY['places.choose'].en}>{COPY['places.choose'].en}</option>
             </select>
             <svg class="icon select-control__icon" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
           </span>
@@ -82,18 +82,18 @@ const fallbackMemoryLinks = fallbackMarkup.replace(/<img\b([^>]*?)src="[^"]*asse
           <button type="button" class="atlas-overview-button" data-atlas-overview hidden><svg class="icon" aria-hidden="true"><use href="#icon-map"/></svg><span><LocalizedText value={COPY['places.showAll']} /></span></button>
         </div>
       </div>
-      <div id="atlas-map" class="atlas-map" role="region" aria-label={COPY['places.mapRegion'].zh} data-locale-aria-label-zh={COPY['places.mapRegion'].zh} data-locale-aria-label-en={COPY['places.mapRegion'].en}></div>
+      <div id="atlas-map" class="atlas-map" role="region" aria-label={COPY['places.mapRegion'].en} data-locale-aria-label-zh={COPY['places.mapRegion'].zh} data-locale-aria-label-en={COPY['places.mapRegion'].en}></div>
       <noscript><p><LocalizedText value={COPY['places.noScript']} /></p></noscript>
       <p class="map-disclaimer"><LocalizedText value={COPY['places.disclaimer']} /></p>
     </section>
 
-    <aside class="memory-column" aria-label={COPY['places.memoryList'].zh} data-locale-aria-label-zh={COPY['places.memoryList'].zh} data-locale-aria-label-en={COPY['places.memoryList'].en}>
+    <aside class="memory-column" aria-label={COPY['places.memoryList'].en} data-locale-aria-label-zh={COPY['places.memoryList'].zh} data-locale-aria-label-en={COPY['places.memoryList'].en}>
       <section id="atlas-viewer" class="atlas-viewer" tabindex="-1" aria-live="polite" aria-atomic="true">
         <p class="atlas-viewer-empty"><svg class="icon" aria-hidden="true"><use href="#icon-map-pin"/></svg><span><LocalizedText value={COPY['places.startHere']} /></span><small><LocalizedText value={COPY['places.selectHint']} /></small></p>
       </section>
       <section class="memory-index" aria-labelledby="memory-index-heading">
         <div class="section-heading"><p class="eyebrow"><LocalizedText value={COPY['places.quickFind']} /></p><h2 id="memory-index-heading"><LocalizedText value={COPY['places.jumpByDate']} /></h2></div>
-        <ol id="atlas-memory-list" class="atlas-memory-list" aria-label={COPY['places.timelineList'].zh} data-locale-aria-label-zh={COPY['places.timelineList'].zh} data-locale-aria-label-en={COPY['places.timelineList'].en}>
+        <ol id="atlas-memory-list" class="atlas-memory-list" aria-label={COPY['places.timelineList'].en} data-locale-aria-label-zh={COPY['places.timelineList'].zh} data-locale-aria-label-en={COPY['places.timelineList'].en}>
           <Fragment set:html={fallbackMemoryLinks} />
         </ol>
       </section>

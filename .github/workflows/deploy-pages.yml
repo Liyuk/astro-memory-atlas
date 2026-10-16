@@ -37,11 +37,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run sample validation and route tests
-        run: npm test
+      - name: Check the Chinese font subsets
+        run: |
+          python3 -m venv /tmp/fontcheck
+          /tmp/fontcheck/bin/pip install fonttools brotli
+          /tmp/fontcheck/bin/python scripts/subset-font.py --check
 
-      - name: Build the static site
-        run: npm run build
+      - name: Run tests and build the site once
+        run: npm test
         env:
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
 

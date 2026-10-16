@@ -19,6 +19,13 @@ test('all six routes render the sample debug panel expanded by default', async (
     assert.match(html, /data-debug-close[^>]*aria-expanded="true"/);
     assert.ok(html.includes(heading), `${path} should render its identifying heading`);
     assert.ok(html.includes(englishTitle), `${path} should include the English title`);
+    assert.match(html, /<html[^>]*\slang="en"/);
+    assert.match(html, /data-language="en"/);
+    const title = html.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
+    assert.match(title, new RegExp(englishTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.doesNotMatch(title, /\p{Script=Han}/u);
+    assert.match(html, /property="og:locale" content="en_US"/);
+    assert.match(html, /data-language-choice="en"[^>]*aria-pressed="true"/);
     assert.match(html, /data-language-choice="zh"/);
     assert.match(html, /data-language-choice="en"/);
   }

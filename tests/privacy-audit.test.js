@@ -6,6 +6,7 @@ test('privacy audit accepts fictional sample code and demo screenshots', () => {
   assert.deepEqual(auditPublicFiles([
     { path: 'src/data/memories.js', content: '林岚和周屿在云杉河岸散步。' },
     { path: 'docs/images/home-demo.png', content: Buffer.from('sample screenshot') },
+    { path: 'src/assets/images/demo/river.jpg', content: Buffer.from('original illustration') },
   ]), []);
 });
 

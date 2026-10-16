@@ -1,14 +1,20 @@
 export const LANGUAGE_STORAGE_KEY = 'site-language';
+export const DEFAULT_LANGUAGE = 'en';
 
-export function localize(value, language = 'zh') {
+export function localize(value, language = DEFAULT_LANGUAGE) {
   if (typeof value === 'string') return value;
   if (!value || typeof value !== 'object') return '';
-  return value[language] ?? value.zh ?? value.en ?? '';
+  return value[language] ?? value.en ?? value.zh ?? '';
+}
+
+export function activeLanguage(root = globalThis.document?.documentElement) {
+  const value = root?.dataset?.language;
+  return value === 'zh' || value === 'en' ? value : DEFAULT_LANGUAGE;
 }
 
 export function createLanguageController(document, storage = globalThis.localStorage) {
   const root = document.documentElement;
-  let language = 'zh';
+  let language = DEFAULT_LANGUAGE;
 
   const setLanguage = (nextLanguage, { persist = true } = {}) => {
     language = nextLanguage === 'en' ? 'en' : 'zh';
@@ -51,7 +57,7 @@ export function createLanguageController(document, storage = globalThis.localSto
   }
 
   const savedLanguage = storage?.getItem(LANGUAGE_STORAGE_KEY);
-  setLanguage(savedLanguage === 'en' ? 'en' : 'zh', { persist: false });
+  setLanguage(savedLanguage === 'zh' ? 'zh' : DEFAULT_LANGUAGE, { persist: false });
 
   return { getLanguage: () => language, setLanguage };
 }
