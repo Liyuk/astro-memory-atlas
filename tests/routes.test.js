@@ -26,6 +26,10 @@ test('all six routes render the sample debug panel expanded by default', async (
     assert.doesNotMatch(title, /\p{Script=Han}/u);
     assert.match(html, /property="og:locale" content="en_US"/);
     assert.match(html, /data-language-choice="en"[^>]*aria-pressed="true"/);
+    if (path === 'index.html') {
+      assert.match(html, /rel="preload" as="image" href="[^"]+\.webp"/);
+      assert.doesNotMatch(html, /rel="preload" as="image" href="[^"]+\.jpe?g"/);
+    }
     assert.match(html, /data-language-choice="zh"/);
     assert.match(html, /data-language-choice="en"/);
   }
