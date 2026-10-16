@@ -40,7 +40,7 @@ Use the “中文 / EN” buttons in the top navigation to switch languages. The
 
 ## Pages and features
 
-The starter has six areas: a home page, memory album, relationship timeline, annual recaps, places map, and future wishes. The album supports keyword search, year filtering, page-turn reading, and an image viewer. The map uses the locally bundled Leaflet files and original illustrated maps; it does not request online map tiles or external fonts.
+The starter has six areas: a home page, memory album, relationship timeline, annual recaps, places map, and future wishes. The album supports keyword search, year filtering, page-turn reading, and an image viewer. The map uses the locally bundled Leaflet files and original illustrated maps; it does not request online map tiles or external fonts. The Chinese font is self-hosted in two slices: pages preload the characters used by the sample, and the remaining GB2312 characters download only when new copy needs them.
 
 The sample debug panel is expanded by default on every page. It can simulate dates, preview anniversaries and birthdays, exercise album and map interactions, and audit all six routes.
 

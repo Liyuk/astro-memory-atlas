@@ -20,14 +20,19 @@ const links = [
     ))}
   </div>
   <div class="site-language-picker" role="group" aria-label={COPY['language.label'].zh} data-locale-aria-label-zh={COPY['language.label'].zh} data-locale-aria-label-en={COPY['language.label'].en}>
-    <button type="button" data-language-choice="zh" aria-pressed="true">中文</button>
-    <button type="button" data-language-choice="en" aria-pressed="false">EN</button>
+    <button type="button" lang="zh-CN" data-language-choice="zh" aria-pressed="true">中文</button>
+    <button type="button" lang="en" data-language-choice="en" aria-pressed="false">EN</button>
   </div>
 </nav>
 <script>
   const navigation = document.querySelector<HTMLElement>('.site-navigation');
+  let navigationFrame = 0;
   const updateNavigationSurface = () => {
-    navigation?.classList.toggle('site-navigation--scrolled', window.scrollY > 32);
+    if (navigationFrame) return;
+    navigationFrame = window.requestAnimationFrame(() => {
+      navigationFrame = 0;
+      navigation?.classList.toggle('site-navigation--scrolled', window.scrollY > 32);
+    });
   };
   updateNavigationSurface();
   window.addEventListener('scroll', updateNavigationSurface, { passive: true });

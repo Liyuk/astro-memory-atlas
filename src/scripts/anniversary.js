@@ -3,7 +3,7 @@ import { getSiteDebugDate, parsePacificDateTime } from '../lib/site-debug-time.j
 import { localize } from '../lib/i18n.js';
 import { text } from '../i18n/copy.js';
 
-export function initializeHomeExperience({ entries = [], reduceMotion = { matches: true } } = {}) {
+export function initializeHomeExperience({ entries = [], memories = [], reduceMotion = { matches: true } } = {}) {
   const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: SITE_CONFIG.timeZone, year: 'numeric', month: '2-digit', day: '2-digit' });
   let simulated = SITE_CONFIG.debugPanel ? parsePacificDateTime(getSiteDebugDate(), SITE_CONFIG.timeZone) : null;
   let currentAnniversary = null;
@@ -11,6 +11,13 @@ export function initializeHomeExperience({ entries = [], reduceMotion = { matche
   let currentDateMessage = null;
   const language = () => document.documentElement.dataset.language ?? 'zh';
   const now = () => simulated ?? new Date();
+  const records = memories.length
+    ? memories
+    : entries.map((entry) => ({
+        date: entry.querySelector('.timeline-date')?.textContent ?? '',
+        title: entry.querySelector('h3')?.innerText.trim() ?? '',
+      }));
+  const recordTitle = (record) => (typeof record.title === 'string' ? record.title : localize(record.title, language()));
   const anniversaryDialog = document.querySelector('#anniversary-dialog');
   const birthdayDialog = document.querySelector('#birthday-dialog');
   const update = () => {
@@ -60,12 +67,11 @@ export function initializeHomeExperience({ entries = [], reduceMotion = { matche
     anniversaryDialog.querySelector('[data-anniversary-intro-title]').textContent = localize(anniversary.label, language());
     const chapters = anniversaryDialog.querySelector('[data-anniversary-chapters]');
     chapters.replaceChildren();
-    const matching = entries.map((entry) => ({ entry, date: entry.querySelector('.timeline-date')?.textContent ?? '' })).filter(({ date }) => date.includes(anniversary.date));
-    matching.slice(0, 3).forEach(({ entry }) => {
+    records.filter((record) => String(record.date).includes(anniversary.date)).slice(0, 3).forEach((record) => {
       const section = document.createElement('section');
       section.className = 'anniversary-chapter';
       const heading = document.createElement('h3');
-      heading.textContent = entry.querySelector('h3')?.innerText.trim() ?? text('status.memory', language());
+      heading.textContent = recordTitle(record) || text('status.memory', language());
       section.append(heading);
       chapters.append(section);
     });
@@ -100,5 +106,11 @@ export function initializeHomeExperience({ entries = [], reduceMotion = { matche
     if (currentDateMessage) setTodayMessage(text('status.simulatedDate', language()), text('status.simulatedDateDetails', language(), { date: currentDateMessage }));
   });
   update();
-  window.setInterval(update, 1000);
+  let timer = window.setInterval(update, 1000);
+  document.addEventListener('visibilitychange', () => {
+    window.clearInterval(timer);
+    if (document.hidden) return;
+    update();
+    timer = window.setInterval(update, 1000);
+  });
 }

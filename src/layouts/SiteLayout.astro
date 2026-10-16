@@ -3,7 +3,10 @@ import IconSprite from '../components/home/IconSprite.astro';
 import SiteNavigation from '../components/SiteNavigation.astro';
 import SiteDebugPanel from '../components/SiteDebugPanel.astro';
 import { SITE_CONFIG } from '../config/site.js';
+import { COPY } from '../i18n/copy.js';
 import { localize } from '../lib/i18n.js';
+import { resolveAlbumImage } from '../lib/image-assets.js';
+import baseFont from '../assets/fonts/NotoSansSC-base.woff2';
 import '../styles/shared.css';
 import '../styles/language.css';
 
@@ -24,6 +27,8 @@ const descriptionEn = localize(description, 'en');
 const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
 const routePaths = { story: '', journey: 'journey/', album: 'album/', annual: 'annual/', places: 'places/', future: 'future/' };
 const canonicalUrl = SITE_CONFIG.siteUrl ? new URL(`${siteBase}${routePaths[current] ?? ''}`, SITE_CONFIG.siteUrl).href : null;
+const socialImage = resolveAlbumImage('demo/river.svg');
+const socialImageUrl = SITE_CONFIG.siteUrl ? new URL(socialImage.src, SITE_CONFIG.siteUrl).href : null;
 ---
 <!doctype html>
 <html lang={SITE_CONFIG.locale} data-page-title-zh={titleZh} data-page-title-en={titleEn}>
@@ -32,13 +37,38 @@ const canonicalUrl = SITE_CONFIG.siteUrl ? new URL(`${siteBase}${routePaths[curr
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content={themeColor}>
     <meta name="description" content={descriptionZh} data-locale-zh={descriptionZh} data-locale-en={descriptionEn}>
+    <meta property="og:title" content={titleZh}>
+    <meta property="og:description" content={descriptionZh}>
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:locale:alternate" content="en">
+    <meta name="twitter:card" content={socialImageUrl ? 'summary_large_image' : 'summary'}>
+    <meta name="twitter:title" content={titleZh}>
+    <meta name="twitter:description" content={descriptionZh}>
     {canonicalUrl && <link rel="canonical" href={canonicalUrl}>}
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl}>}
+    {socialImageUrl && <meta property="og:image" content={socialImageUrl}>}
+    {socialImageUrl && <meta name="twitter:image" content={socialImageUrl}>}
     <link rel="icon" type="image/svg+xml" href={`${siteBase}favicon.svg`}>
+    <link rel="preload" href={baseFont} as="font" type="font/woff2" crossorigin>
     {baseHref && <base href={baseHref} />}
     <title>{titleZh}</title>
+    <script is:inline>
+      try {
+        if (localStorage.getItem('site-language') === 'en') {
+          var root = document.documentElement;
+          root.lang = 'en';
+          root.dataset.language = 'en';
+          if (root.dataset.pageTitleEn) document.title = root.dataset.pageTitleEn;
+          var description = document.querySelector('meta[name="description"]');
+          if (description && description.dataset.localeEn) description.content = description.dataset.localeEn;
+        }
+      } catch (error) {}
+    </script>
     <slot name="head" />
   </head>
   <body class={bodyClass}>
+    <a class="skip-link" href="#main-content"><span lang="zh-CN" data-locale-copy="zh">{COPY['nav.skip'].zh}</span><span lang="en" data-locale-copy="en">{COPY['nav.skip'].en}</span></a>
     <SiteNavigation current={current} />
     <IconSprite />
     <slot />

@@ -22,7 +22,7 @@ const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
     {memories.map((memory) => (
       <article class="featured-memory memory-entry">
         <button type="button" class="featured-memory-photo memory-image-frame memory-image-hover" data-story-memory={memory.id} aria-label={`放大查看：${memory.title.zh}`} data-locale-aria-label-zh={`放大查看：${memory.title.zh}`} data-locale-aria-label-en={`View larger: ${memory.title.en}`}>
-          <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
+          <OptimizedImage variant="card" src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
         </button>
         <div class="featured-memory-copy memory-entry-copy"><p class="timeline-date">{memory.date}</p><h3><LocalizedText value={memory.title} /></h3></div>
       </article>

@@ -8,7 +8,7 @@ export function renderPlacesMemoryIndex(memories, basePath = '/') {
   const localized = (value) => {
     const zh = typeof value === 'string' ? value : value?.zh ?? value?.en ?? '';
     const en = typeof value === 'string' ? value : value?.en ?? value?.zh ?? '';
-    return `<span lang="zh-CN" data-locale-copy="zh">${escapeHTML(zh)}</span><span lang="en" data-locale-copy="en" hidden>${escapeHTML(en)}</span>`;
+    return `<span lang="zh-CN" data-locale-copy="zh">${escapeHTML(zh)}</span><span lang="en" data-locale-copy="en">${escapeHTML(en)}</span>`;
   };
   return memories.filter(({ placeIds }) => placeIds.length > 0).map((memory) => {
     const id = escapeHTML(memory.id);

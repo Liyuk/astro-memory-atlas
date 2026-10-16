@@ -37,8 +37,3 @@ document.querySelectorAll('[data-chapter]').forEach((button) => {
   });
 });
 
-const familyDialog = document.querySelector('#family-easter-dialog');
-document.addEventListener('click', (event) => {
-  if (event.target.closest('[data-family-easter-trigger]') && !familyDialog?.open) familyDialog?.showModal();
-  if (event.target.closest('[data-family-easter-close]') && familyDialog?.open) familyDialog.close();
-});

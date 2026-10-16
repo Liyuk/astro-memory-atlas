@@ -2,7 +2,6 @@
 import SharedWishes from '../components/SharedWishes.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { SITE_CONFIG } from '../config/site.js';
-import LocalizedText from '../components/LocalizedText.astro';
 import { COPY } from '../i18n/copy.js';
 import '../styles/shared-wishes.css';
 ---
@@ -11,6 +10,5 @@ import '../styles/shared-wishes.css';
   description={{ zh: '浏览并编辑这份虚构示例中的未来愿望清单。', en: 'Browse and edit the fictional sample list of future wishes.' }}
   current="future"
 >
-  <a class="skip-link" href="#shared-wishes" aria-label="跳到以后一起" data-locale-aria-label-zh="跳到以后一起" data-locale-aria-label-en="Skip to Someday Together"><LocalizedText value={COPY['future.title']} /></a>
   <SharedWishes />
 </SiteLayout>

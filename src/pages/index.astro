@@ -5,14 +5,17 @@ import FeaturedMemories from '../components/home/FeaturedMemories.astro';
 import HomeOverlays from '../components/home/HomeOverlays.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { SITE_CONFIG } from '../config/site.js';
+import { resolveAlbumImage } from '../lib/image-assets.js';
 import '../styles/home.css';
+const heroImage = resolveAlbumImage('demo/river.svg');
 ---
 <SiteLayout
   title={SITE_CONFIG.brand.name}
   description={SITE_CONFIG.brand.description}
   current="story"
 >
-  <main class="page">
+  <link slot="head" rel="preload" as="image" href={heroImage.src} fetchpriority="high">
+  <main class="page" id="main-content" tabindex="-1">
     <Hero />
     <StoryFilm />
     <FeaturedMemories />

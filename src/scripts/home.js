@@ -1,30 +1,20 @@
-import { initializeMemoryInteractions } from './memory-archive.js';
+import { memories } from '../data/memories.js';
+import { resolveAlbumImage } from '../lib/image-assets.js';
 import { initializeHomeExperience } from './anniversary.js';
+import { createMemoryImageViewer } from './memory-image-viewer.js';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const siteBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const albumUrl = `${siteBase}album/`;
-function navigateToAlbum(entry) {
-  if (!entry) return;
-  const anchor = entry.id ? `#${entry.id}` : `?q=${encodeURIComponent(entry.querySelector('h3')?.textContent.trim() || '')}`;
-  window.location.assign(`${albumUrl}${anchor}`);
-}
+const catalog = memories.map((memory) => {
+  const image = resolveAlbumImage(memory.image);
+  return { ...memory, src: image.src, msrc: image.src, width: image.width, height: image.height };
+});
+const imageViewer = createMemoryImageViewer();
 
-fetch(`${albumUrl}index.html`)
-  .then((response) => {
-    if (!response.ok) throw new Error('Could not load the complete memory index.');
-    return response.text();
-  })
-  .then((html) => {
-    const albumDocument = new DOMParser().parseFromString(html, 'text/html');
-    const entries = [...albumDocument.querySelectorAll('.book-spread .memory-entry')];
-    const galleryGroups = new Map();
-    const archive = initializeMemoryInteractions({ entries, galleryGroups, reduceMotion });
-    const jumpToEntry = (index) => navigateToAlbum(entries[index]);
-    initializeHomeExperience({ entries, galleryGroups, reduceMotion, ...archive, jumpToEntry });
-  })
-  .catch(() => {
-    const emptyArchive = { entries: [], galleryGroups: new Map() };
-    const interactions = initializeMemoryInteractions({ ...emptyArchive, reduceMotion });
-    initializeHomeExperience({ ...emptyArchive, reduceMotion, ...interactions, jumpToEntry: () => {} });
-  });
+document.addEventListener('click', (event) => {
+  const opener = event.target.closest('[data-story-memory]');
+  if (!opener) return;
+  const index = catalog.findIndex((memory) => memory.id === opener.dataset.storyMemory);
+  if (index >= 0) imageViewer.open(catalog, index, opener);
+});
+
+initializeHomeExperience({ memories: catalog, reduceMotion });

@@ -3,7 +3,6 @@ import AnnualReview from '../../components/AnnualReview.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { SITE_CONFIG } from '../../config/site.js';
 import { COPY } from '../../i18n/copy.js';
-import LocalizedText from '../../components/LocalizedText.astro';
 import '../../styles/annual-review.css';
 ---
 <SiteLayout
@@ -11,6 +10,5 @@ import '../../styles/annual-review.css';
   description={{ zh: COPY['annual.intro'].zh, en: COPY['annual.intro'].en }}
   current="annual"
 >
-  <a class="skip-link" href="#annual-review" aria-label="跳到年度回顾" data-locale-aria-label-zh="跳到年度回顾" data-locale-aria-label-en="Skip to Year in Review"><LocalizedText value={{ zh: '跳到年度回顾', en: 'Skip to Year in Review' }} /></a>
   <AnnualReview />
 </SiteLayout>

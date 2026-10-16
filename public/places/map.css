@@ -29,8 +29,6 @@ body.theme-atlas {
 }
 button, a { font: inherit; }
 button:focus-visible, a:focus-visible { outline: var(--focus-ring, 2px solid #a96748); outline-offset: 4px; }
-.skip-link { position: absolute; z-index: 1000; top: 8px; left: 8px; padding: 10px 14px; transform: translateY(-160%); color: #302a28; background: var(--color-highlight, #e9c08f); border-radius: 8px; }
-.skip-link:focus { transform: translateY(0); }
 .atlas-header { max-width: 1280px; margin: 0 auto 24px; }
 .back-link { display: inline-flex; gap: 9px; align-items: center; margin-bottom: 22px; color: var(--atlas-muted); text-decoration: none; font: 500 .8rem/1.4 var(--font-family); }
 .back-link:hover { color: var(--color-accent-strong, #774936); }

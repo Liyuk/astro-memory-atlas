@@ -1,6 +1,7 @@
 export const COPY = {
   'brand.name': { zh: '记忆地图', en: 'Memory Atlas' },
   'brand.description': { zh: '一个可复制、修改和部署的私人记忆站示例。', en: 'A sample personal memory site you can copy, customize, and deploy.' },
+  'nav.skip': { zh: '跳到主要内容', en: 'Skip to main content' },
   'nav.label': { zh: '站点导航', en: 'Main navigation' },
   'nav.browse': { zh: '浏览站点页面', en: 'Browse pages' },
   'nav.story': { zh: '我们的故事', en: 'Our Story' },

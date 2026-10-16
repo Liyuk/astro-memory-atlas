@@ -1,11 +1,3 @@
-@font-face {
-  font-family: "Noto Sans SC";
-  src: url("../assets/fonts/NotoSansSC-VF.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
-
 :root {
   color-scheme: light;
 
@@ -22,7 +14,7 @@
   --color-highlight: #e9c08f;
 
   /* Typography */
-  --font-family: "Noto Sans SC", sans-serif;
+  --font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   --font-display: var(--font-family);
   --font-body: var(--font-family);
   --text-xs: .68rem;

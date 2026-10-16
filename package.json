@@ -2,7 +2,9 @@
   "name": "astro-memory-atlas",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "predev": "npm run validate && npm run build:places",
     "dev": "astro dev",
@@ -16,8 +18,6 @@
     "build:places": "node scripts/build-places-index.js"
   },
   "dependencies": {
-    "leaflet": "1.9.4",
-    "leaflet.markercluster": "1.5.3",
     "normalize.css": "8.0.1",
     "photoswipe": "5.4.4"
   },
