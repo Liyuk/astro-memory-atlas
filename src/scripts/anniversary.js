@@ -1,6 +1,6 @@
 import { SITE_CONFIG } from '../config/site.js';
 import { getSiteDebugDate, parsePacificDateTime } from '../lib/site-debug-time.js';
-import { localize } from '../lib/i18n.js';
+import { activeLanguage, localize } from '../lib/i18n.js';
 import { text } from '../i18n/copy.js';
 
 export function initializeHomeExperience({ entries = [], memories = [], reduceMotion = { matches: true } } = {}) {
@@ -9,7 +9,10 @@ export function initializeHomeExperience({ entries = [], memories = [], reduceMo
   let currentAnniversary = null;
   let currentBirthday = null;
   let currentDateMessage = null;
-  const language = () => document.documentElement.dataset.language ?? 'zh';
+  const language = () => activeLanguage();
+  const setText = (node, value) => {
+    if (node && node.textContent !== value) node.textContent = value;
+  };
   const now = () => simulated ?? new Date();
   const records = memories.length
     ? memories
@@ -29,13 +32,13 @@ export function initializeHomeExperience({ entries = [], memories = [], reduceMo
       let target = `${year}-${month}-${day}`;
       if (target < today) target = `${year + 1}-${month}-${day}`;
       const days = Math.ceil((Date.parse(`${target}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86400000);
-      card.querySelector('[data-countdown-days]').textContent = days === 0 ? '' : String(days);
-      card.querySelector('[data-countdown-prefix]').textContent = days === 0
+      setText(card.querySelector('[data-countdown-days]'), days === 0 ? '' : String(days));
+      setText(card.querySelector('[data-countdown-prefix]'), days === 0
         ? text('common.is', language())
-        : text('common.in', language());
-      card.querySelector('[data-countdown-unit]').textContent = days === 0
+        : text('common.in', language()));
+      setText(card.querySelector('[data-countdown-unit]'), days === 0
         ? text('common.today', language())
-        : text('common.days', language());
+        : text('common.days', language()));
     });
     document.querySelectorAll('.timer[data-start]').forEach((timer) => {
       const elapsed = Math.max(0, now().getTime() - Date.parse(timer.dataset.start));
@@ -43,7 +46,7 @@ export function initializeHomeExperience({ entries = [], memories = [], reduceMo
       const units = { days: Math.floor(seconds / 86400), hours: Math.floor(seconds / 3600) % 24, minutes: Math.floor(seconds / 60) % 60, seconds: seconds % 60 };
       for (const [unit, value] of Object.entries(units)) {
         const node = timer.querySelector(`[data-unit="${unit}"]`);
-        if (node) node.textContent = unit === 'days' ? String(value) : String(value).padStart(2, '0');
+        setText(node, unit === 'days' ? String(value) : String(value).padStart(2, '0'));
       }
     });
   };

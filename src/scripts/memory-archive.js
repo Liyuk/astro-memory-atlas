@@ -1,5 +1,6 @@
 import { createMemoryImageViewer } from './memory-image-viewer.js';
 import { text } from '../i18n/copy.js';
+import { activeLanguage } from '../lib/i18n.js';
 
 export function initializeMemoryArchiveLayout() {
   const gallery = document.querySelector('.book-spread');
@@ -30,7 +31,7 @@ export function initializeMemoryArchiveLayout() {
 }
 
 export function initializeMemoryInteractions({ entries, galleryGroups, reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)') }) {
-  const language = () => document.documentElement.dataset.language ?? 'zh';
+  const language = () => activeLanguage();
   const gallery = document.querySelector('.book-spread');
   const memorySearch = document.querySelector('[data-memory-search]');
   const memoryYear = document.querySelector('[data-memory-year]');

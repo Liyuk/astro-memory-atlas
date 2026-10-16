@@ -1,9 +1,9 @@
-import { localize } from '../src/lib/i18n.js';
+import { activeLanguage, localize } from '../src/lib/i18n.js';
 
 const SELECTION_ZOOM = 1.35;
 
 function language() {
-  return globalThis.document?.documentElement?.dataset.language ?? 'zh';
+  return activeLanguage();
 }
 
 function copyHTML(value) {

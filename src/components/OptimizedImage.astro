@@ -28,7 +28,7 @@ const viewerAttributes = viewer?.width && viewer?.height
     src={image.src}
     width={image.width || undefined}
     height={image.height || undefined}
-    alt={altZh}
+    alt={altEn}
     data-locale-alt-zh={altZh}
     data-locale-alt-en={altEn}
     {...attributes}
@@ -37,7 +37,7 @@ const viewerAttributes = viewer?.width && viewer?.height
 ) : (
   <Image
     src={image}
-    alt={altZh}
+    alt={altEn}
     data-locale-alt-zh={altZh}
     data-locale-alt-en={altEn}
     {...getAlbumImageOptions(image, preset)}

@@ -1,6 +1,7 @@
 import { SITE_CONFIG } from '../config/site.js';
 import { setSiteDebugDate, clearSiteDebugDate } from '../lib/site-debug-time.js';
 import { text } from '../i18n/copy.js';
+import { activeLanguage } from '../lib/i18n.js';
 
 const panel = document.querySelector('[data-debug-panel]');
 if (panel) {
@@ -9,7 +10,7 @@ if (panel) {
   let statusKey = '';
   let statusValues = {};
   let renderStatus = () => '';
-  const language = () => document.documentElement.dataset.language ?? 'zh';
+  const language = () => activeLanguage();
   const setStatus = (key, values = {}) => {
     statusKey = key;
     statusValues = values;

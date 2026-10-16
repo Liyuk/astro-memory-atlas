@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, stat } from 'node:fs/promises';
 import { getAlbumImageOptions, selectImagePreset } from '../src/lib/image-presets.js';
-import { renderRobots, renderSitemap } from '../src/lib/seo.js';
+import { renderRobots, renderSitemap, socialImageUrl } from '../src/lib/seo.js';
 
 test('large illustrations are not capped at a thumbnail width', () => {
   const hero = selectImagePreset({ variant: 'hero' });
@@ -35,4 +35,20 @@ test('robots and sitemap use the configured site origin', () => {
   assert.doesNotMatch(renderSitemap(''), /<loc>/);
   assert.match(renderRobots('https://example.com', '/astro-memory-atlas/'), /Sitemap: https:\/\/example\.com\/astro-memory-atlas\/sitemap\.xml/);
   assert.match(renderSitemap('https://example.com', '/demo'), /<loc>https:\/\/example\.com\/demo\/journey\/<\/loc>/);
+  assert.match(renderSitemap('https://example.com', '/'), /hreflang="en"/);
+  assert.match(renderSitemap('https://example.com', '/'), /hreflang="zh-CN"/);
+  assert.match(renderSitemap('https://example.com', '/'), /hreflang="x-default"/);
+  assert.equal(socialImageUrl(''), '');
+  assert.equal(socialImageUrl('https://example.com', '/astro-memory-atlas/'), 'https://example.com/astro-memory-atlas/og.jpg');
+});
+
+test('the social image is a 1200 by 630 JPEG', async () => {
+  const file = new URL('../public/og.jpg', import.meta.url);
+  const sharp = (await import('sharp')).default;
+  const meta = await sharp(file.pathname).metadata();
+  const fileStat = await stat(file);
+  assert.equal(meta.format, 'jpeg');
+  assert.equal(meta.width, 1200);
+  assert.equal(meta.height, 630);
+  assert.ok(fileStat.size < 400_000, `social image should stay under 400KB, got ${fileStat.size}`);
 });

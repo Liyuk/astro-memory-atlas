@@ -12,16 +12,16 @@ const links = [
   { id: 'future', href: `${base}future/`, label: COPY['nav.future'] },
 ];
 ---
-<nav class="site-navigation" aria-label={COPY['nav.label'].zh} data-locale-aria-label-zh={COPY['nav.label'].zh} data-locale-aria-label-en={COPY['nav.label'].en}>
+<nav class="site-navigation" aria-label={COPY['nav.label'].en} data-locale-aria-label-zh={COPY['nav.label'].zh} data-locale-aria-label-en={COPY['nav.label'].en}>
   <a class="site-navigation-name" href={`${base}#opening`}><LocalizedText value={COPY['brand.name']} /></a>
-  <div class="site-navigation-links" tabindex="0" aria-label={COPY['nav.browse'].zh} data-locale-aria-label-zh={COPY['nav.browse'].zh} data-locale-aria-label-en={COPY['nav.browse'].en}>
+  <div class="site-navigation-links" tabindex="0" aria-label={COPY['nav.browse'].en} data-locale-aria-label-zh={COPY['nav.browse'].zh} data-locale-aria-label-en={COPY['nav.browse'].en}>
     {links.map(({ id, href, label }) => (
       <a href={href} aria-current={current === id ? 'page' : undefined}><LocalizedText value={label} /></a>
     ))}
   </div>
-  <div class="site-language-picker" role="group" aria-label={COPY['language.label'].zh} data-locale-aria-label-zh={COPY['language.label'].zh} data-locale-aria-label-en={COPY['language.label'].en}>
-    <button type="button" lang="zh-CN" data-language-choice="zh" aria-pressed="true">中文</button>
-    <button type="button" lang="en" data-language-choice="en" aria-pressed="false">EN</button>
+  <div class="site-language-picker" role="group" aria-label={COPY['language.label'].en} data-locale-aria-label-zh={COPY['language.label'].zh} data-locale-aria-label-en={COPY['language.label'].en}>
+    <button type="button" lang="en" data-language-choice="en" aria-pressed="true">EN</button>
+    <button type="button" lang="zh-CN" data-language-choice="zh" aria-pressed="false">中文</button>
   </div>
 </nav>
 <script>

@@ -18,6 +18,7 @@ the upstream TTF from the Google Fonts repository.
 from __future__ import annotations
 
 import argparse
+import re
 import tempfile
 import urllib.request
 from io import BytesIO
@@ -138,10 +139,47 @@ def face(family: str, filename: str, codepoints: set[int]) -> str:
     )
 
 
+def parse_unicode_range(value: str) -> set[int]:
+    codepoints = set()
+    for part in value.split(','):
+        match = re.fullmatch(r'U\+([0-9A-F]+)(?:-([0-9A-F]+))?', part.strip(), re.IGNORECASE)
+        if not match:
+            continue
+        start = int(match.group(1), 16)
+        end = int(match.group(2), 16) if match.group(2) else start
+        codepoints.update(range(start, end + 1))
+    return codepoints
+
+
+def css_ranges(css: str) -> dict[str, set[int]]:
+    ranges = {}
+    for filename, value in re.findall(r'url\("\.\./assets/fonts/([^"]+)"\).*?unicode-range:\s*([^;]+);', css, re.S):
+        ranges[filename] = parse_unicode_range(value)
+    return ranges
+
+
+def check_subsets() -> None:
+    ranges = css_ranges(CSS_PATH.read_text(encoding='utf-8'))
+    base_cmap = set(TTFont(BASE_PATH).getBestCmap())
+    common_cmap = set(TTFont(COMMON_PATH).getBestCmap())
+    if ranges.get(BASE_PATH.name) != base_cmap or ranges.get(COMMON_PATH.name) != common_cmap:
+        raise SystemExit('font-face.css unicode-range does not match the subset files. Re-run python3 scripts/subset-font.py')
+    used = {ord(character) for character in repo_text()}
+    leaked = sorted(codepoint for codepoint in used if codepoint in common_cmap and codepoint not in base_cmap)
+    if leaked:
+        sample = ''.join(chr(codepoint) for codepoint in leaked[:12])
+        raise SystemExit(f'{len(leaked)} source characters would download the large font, including {sample!r}. Re-run python3 scripts/subset-font.py')
+    print(f'font subsets cover the source copy; base {BASE_PATH.stat().st_size} bytes')
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--source', type=Path)
+    parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
+    if args.check:
+        check_subsets()
+        return
     source = load_source(args.source)
     source_cmap = set(source.getBestCmap())
     used = {character for character in repo_text() if ord(character) in source_cmap}

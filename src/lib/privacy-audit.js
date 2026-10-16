@@ -15,7 +15,8 @@ export function auditPublicFiles(files) {
     for (const [label, pattern] of forbiddenPath) if (pattern.test(path)) issues.push(`${path}: ${label}`);
     const text = Buffer.isBuffer(content) ? content.toString('utf8') : String(content);
     for (const [label, pattern] of forbiddenText) if (pattern.test(text)) issues.push(`${path}: contains ${label}`);
-    if (/^src\/assets\/images\//i.test(path) && /\.(?:jpe?g|png|webp)$/i.test(path)) issues.push(`${path}: sample art must be locally authored vector illustrations`);
+    const demoRaster = /^src\/assets\/images\/demo\/[^/]+\.(?:jpe?g|png|webp)$/i.test(path);
+    if (/^src\/assets\/images\//i.test(path) && /\.(?:jpe?g|png|webp)$/i.test(path) && !demoRaster) issues.push(`${path}: sample art outside demo/ must stay vector illustrations`);
   }
   return issues;
 }

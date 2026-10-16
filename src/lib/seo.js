@@ -15,6 +15,11 @@ function siteBase(siteUrl, basePath) {
   return new URL(normalized, siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`);
 }
 
+export function socialImageUrl(siteUrl = '', basePath = '/') {
+  if (!siteUrl) return '';
+  return new URL('og.jpg', siteBase(siteUrl, basePath)).href;
+}
+
 export function renderRobots(siteUrl = '', basePath = '/') {
   const lines = ['User-agent: *', 'Allow: /'];
   if (siteUrl) lines.push(`Sitemap: ${new URL('sitemap.xml', siteBase(siteUrl, basePath)).href}`);
@@ -25,8 +30,11 @@ export function renderSitemap(siteUrl = '', basePath = '/') {
   const urls = siteUrl
     ? PUBLIC_ROUTES.map(({ path, priority }) => {
         const location = new URL(path, siteBase(siteUrl, basePath)).href;
-        return `  <url><loc>${location}</loc><priority>${priority}</priority></url>`;
+        const alternates = ['en', 'zh-CN', 'x-default']
+          .map((hreflang) => `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${location}"/>`)
+          .join('\n');
+        return `  <url>\n    <loc>${location}</loc>\n${alternates}\n    <priority>${priority}</priority>\n  </url>`;
       })
     : [];
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}${urls.length ? '\n' : ''}</urlset>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join('\n')}${urls.length ? '\n' : ''}</urlset>\n`;
 }
