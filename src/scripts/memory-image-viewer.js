@@ -1,5 +1,7 @@
 import { localize } from '../lib/i18n.js';
 import { text } from '../i18n/copy.js';
+import 'photoswipe/style.css';
+import '../styles/memory-viewer.css';
 
 export function createMemoryImageViewer({ loadPhotoSwipe = () => import('photoswipe'), documentRef = globalThis.document } = {}) {
   let activeViewer = null;

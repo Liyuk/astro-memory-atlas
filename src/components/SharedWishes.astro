@@ -4,7 +4,7 @@ import { sharedWishCategories, sharedWishes } from '../data/shared-wishes.js';
 import { COPY } from '../i18n/copy.js';
 const wishesByCategory = new Map(sharedWishCategories.map(({ id }) => [id, sharedWishes.filter((wish) => wish.category === id)]));
 ---
-<main class="wishes-page" id="shared-wishes">
+<main class="wishes-page" id="main-content" tabindex="-1">
   <header class="wishes-intro">
     <p class="wishes-kicker"><LocalizedText value={COPY['future.kicker']} /></p>
     <h1><LocalizedText value={COPY['future.title']} /></h1>

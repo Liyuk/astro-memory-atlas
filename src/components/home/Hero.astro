@@ -9,7 +9,7 @@ const monthDay = (date) => (date.length === 10 ? date.slice(5) : date).replace('
 ---
 <section class="hero" id="opening" aria-label={COPY['hero.accessible'].zh} data-locale-aria-label-zh={COPY['hero.accessible'].zh} data-locale-aria-label-en={COPY['hero.accessible'].en}>
   <div class="hero-art">
-    <figure><div class="cover-image-stack"><OptimizedImage src="./assets/images/demo/river.svg" alt={{ zh: '夕阳下两个人沿着河岸散步的抽象插画', en: 'An abstract illustration of two people walking along a river at sunset' }} fetchpriority="high" decoding="async" /></div><figcaption class="photo-note">林岚 / Lin Lan &amp; 周屿 / Zhou Yu · <LocalizedText value={COPY['common.sample']} /></figcaption></figure>
+    <figure><div class="cover-image-stack"><OptimizedImage variant="hero" src="./assets/images/demo/river.svg" alt={{ zh: '夕阳下两个人沿着河岸散步的抽象插画', en: 'An abstract illustration of two people walking along a river at sunset' }} fetchpriority="high" decoding="async" /></div><figcaption class="photo-note">林岚 / Lin Lan &amp; 周屿 / Zhou Yu · <LocalizedText value={COPY['common.sample']} /></figcaption></figure>
     <p class="hero-caption"><LocalizedText value={COPY['hero.caption']} /></p>
   </div>
   <div class="hero-content">

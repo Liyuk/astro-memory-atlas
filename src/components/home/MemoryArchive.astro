@@ -13,7 +13,7 @@ import { COPY } from '../../i18n/copy.js';
     <p class="story-copy"><LocalizedText value={{ zh: '示例内容可按你的故事自由替换', en: 'Replace the sample content with your own story' }} /></p>
     <aside class="memory-nudge" aria-label="今天翻到的一段回忆" data-locale-aria-label-zh="今天翻到的一段回忆" data-locale-aria-label-en="A memory for today">
       <p class="memory-nudge-label"><LocalizedText value={COPY['home.nudge']} /></p>
-      <p class="memory-nudge-memory"><strong data-memory-title>{memories[0].title.zh}<span data-locale-copy="en" hidden>{memories[0].title.en}</span></strong><span class="memory-nudge-date" data-memory-date></span></p>
+      <p class="memory-nudge-memory"><strong data-memory-title><span lang="zh-CN" data-locale-copy="zh">{memories[0].title.zh}</span><span lang="en" data-locale-copy="en">{memories[0].title.en}</span></strong><span class="memory-nudge-date" data-memory-date></span></p>
       <button class="memory-nudge-button" type="button" data-memory-jump><LocalizedText value={COPY['home.jump']} /> <span aria-hidden="true"><svg class="icon"><use href="#icon-arrow-up-right"></use></svg></span></button>
     </aside>
   </header>
@@ -53,10 +53,7 @@ import { COPY } from '../../i18n/copy.js';
         <article class={index === 0 ? 'memory-entry is-active' : 'memory-entry'} id={`memory-${memory.id}`}>
           <div class="memory-page-layout">
             <div class="memory-entry-art memory-image-frame memory-image-hover">
-              <OptimizedImage fullSizeForViewer src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
-              {memory.flags?.includes('family-easter-trigger') && (
-                <button class="family-easter-trigger" type="button" data-family-easter-trigger aria-label="查看特别插画" title="查看特别插画" data-locale-aria-label-zh="查看特别插画" data-locale-aria-label-en="View the special illustration" data-locale-title-zh="查看特别插画" data-locale-title-en="View the special illustration"><svg class="icon"><use href="#icon-sparkles"></use></svg></button>
-              )}
+              <OptimizedImage variant="album" fullSizeForViewer src={`./assets/images/${memory.image}`} alt={memory.alt} loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : undefined} decoding="async" />
             </div>
             <div class="memory-entry-copy">
               <p class="timeline-date">{memory.date}</p>

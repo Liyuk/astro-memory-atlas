@@ -3,7 +3,7 @@ import { createMemoryImageViewer } from './memory-image-viewer.js';
 import { atlasData } from '../../places/data.js';
 import { text } from '../i18n/copy.js';
 
-const root = document.querySelector('#memory-atlas');
+const root = document.querySelector('[data-memory-atlas]');
 const imageViewer = createMemoryImageViewer();
 const siteBase = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 

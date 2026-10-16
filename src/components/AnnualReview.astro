@@ -37,7 +37,7 @@ const annualGroups = years.map((year) => {
   return { year, recap, highlights, memories: yearsByMemory.get(year), additionalMemories: yearsByMemory.get(year).filter((memory) => !highlightedIds.has(memory.id)) };
 });
 ---
-<main class="annual-page" id="annual-review">
+<main class="annual-page" id="main-content" tabindex="-1">
   <header class="annual-intro">
     <p class="annual-kicker"><LocalizedText value={COPY['annual.kicker']} /></p>
     <h1><LocalizedText value={COPY['annual.title']} /></h1>
@@ -63,7 +63,7 @@ const annualGroups = years.map((year) => {
             {highlights.map(({ title, note, memory }) => (
               memory ? (
                 <a class="annual-highlight annual-highlight--photo" href={`${siteBase}album/#memory-${memory.id}`}>
-                  <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
+                  <OptimizedImage variant="card" src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
                   <span class="annual-highlight-copy"><time>{memory.date}</time><strong><LocalizedText value={title ?? memory.title} /></strong><span><LocalizedText value={note ?? memory.description} /></span></span>
                 </a>
               ) : (
@@ -81,7 +81,7 @@ const annualGroups = years.map((year) => {
           <div class="annual-gallery" aria-label={`${year} 年的其他相册照片`} data-locale-aria-label-zh={`${year} 年的其他相册照片`} data-locale-aria-label-en={`More photos from ${year}`}>
             {additionalMemories.map((memory) => (
               <a class="annual-photo" href={`${siteBase}album/#memory-${memory.id}`}>
-                <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
+                <OptimizedImage variant="card" src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
                 <span class="annual-photo-caption"><time>{memory.date}</time><strong><LocalizedText value={memory.title} /></strong></span>
               </a>
             ))}
@@ -98,7 +98,7 @@ const annualGroups = years.map((year) => {
       <div class="annual-gallery">
         {unassigned.map((memory) => (
           <a class="annual-photo" href={`${siteBase}album/#memory-${memory.id}`}>
-            <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
+            <OptimizedImage variant="card" src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
             <span class="annual-photo-caption"><time>{memory.date}</time><strong><LocalizedText value={memory.title} /></strong></span>
           </a>
         ))}

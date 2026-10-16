@@ -1,3 +1,5 @@
+html:not([data-language="en"]) [data-locale-copy="en"] { display: none; }
+html[data-language="en"] [data-locale-copy="zh"] { display: none; }
 [data-locale-copy][hidden] { display: none !important; }
 .site-language-picker { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 2px; padding: 3px; border: 1px solid color-mix(in srgb, var(--color-accent-strong, #774936) 20%, transparent); border-radius: 999px; }
 .site-language-picker button { min-width: 32px; min-height: 34px; padding: 0 7px; border: 0; border-radius: 999px; color: var(--color-navigation-muted, #726763); background: transparent; font: inherit; cursor: pointer; }

@@ -140,7 +140,7 @@ for (const year of milestoneYears) {
               <div class="journey-memory-stack">
                 {item.memories.map((memory) => (
                   <a class="journey-memory" href={`${siteBase}album/#memory-${memory.id}`}>
-                    <OptimizedImage src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
+                    <OptimizedImage variant="thumb" src={`./assets/images/${memory.image}`} alt={memory.alt} loading="lazy" decoding="async" />
                     <span class="journey-memory-copy"><time>{memory.date}</time><strong><LocalizedText value={memory.title} /></strong><span><LocalizedText value={memory.description} /></span></span>
                   </a>
                 ))}

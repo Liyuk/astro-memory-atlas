@@ -14,7 +14,7 @@ const siteBase = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
   current="album"
   baseHref={siteBase}
 >
-  <main class="page album-page">
+  <main class="page album-page" id="main-content" tabindex="-1">
     <p class="album-back"><a class="scene-link" href={siteBase}><LocalizedText value={COPY['album.back']} /></a></p>
     <MemoryArchive />
   </main>

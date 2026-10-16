@@ -1,36 +1,47 @@
 ---
 import { getImage, Image } from 'astro:assets';
-import { getAlbumImageOptions, resolveAlbumImage } from '../lib/image-assets.js';
+import { getAlbumImageOptions, isVectorImage, resolveAlbumImage, selectImagePreset } from '../lib/image-assets.js';
 
-const { src, alt = '', fullSizeForViewer = false, ...attributes } = Astro.props;
+const { src, alt = '', fullSizeForViewer = false, variant, ...attributes } = Astro.props;
 const altZh = typeof alt === 'string' ? alt : alt?.zh ?? alt?.en ?? '';
 const altEn = typeof alt === 'string' ? alt : alt?.en ?? alt?.zh ?? '';
 const image = resolveAlbumImage(src);
-const imagePath = String(src);
-const imageClassList = String(attributes.class ?? '').split(/\s+/);
-let imageOptions = getAlbumImageOptions(image);
-if (imagePath.includes('/demo/')) {
-  imageOptions = getAlbumImageOptions(image, { width: 128, widths: [128, 256], sizes: '128px' });
-} else if (imagePath.includes('/cover/')) {
-  imageOptions = getAlbumImageOptions(image, { width: 340, sizes: '340px' });
-} else if (imageClassList.includes('memory-image-frame__image')) {
-  imageOptions = getAlbumImageOptions(image, { width: 760, sizes: '760px' });
-}
-const viewerImage = fullSizeForViewer
-  ? await getImage({ src: image, format: 'webp', quality: 85, width: Math.min(image.width, 2048) })
+const preset = selectImagePreset({ variant, className: attributes.class });
+const vector = isVectorImage(image, src);
+const viewerImage = fullSizeForViewer && !vector
+  ? await getImage({ src: image, format: 'webp', quality: 85, width: Math.min(image.width || 1600, 1600) })
   : null;
+const viewer = fullSizeForViewer
+  ? {
+      src: viewerImage?.src ?? image.src,
+      width: viewerImage?.attributes.width ?? image.width,
+      height: viewerImage?.attributes.height ?? image.height,
+    }
+  : null;
+const viewerAttributes = viewer?.width && viewer?.height
+  ? { 'data-pswp-src': viewer.src, 'data-pswp-width': viewer.width, 'data-pswp-height': viewer.height }
+  : {};
 ---
 
-<Image
-  src={image}
-  alt={altZh}
-  data-locale-alt-zh={altZh}
-  data-locale-alt-en={altEn}
-  {...imageOptions}
-  {...attributes}
-  {...(viewerImage ? {
-    'data-pswp-src': viewerImage.src,
-    'data-pswp-width': viewerImage.attributes.width,
-    'data-pswp-height': viewerImage.attributes.height,
-  } : {})}
-/>
+{vector ? (
+  <img
+    src={image.src}
+    width={image.width || undefined}
+    height={image.height || undefined}
+    alt={altZh}
+    data-locale-alt-zh={altZh}
+    data-locale-alt-en={altEn}
+    {...attributes}
+    {...viewerAttributes}
+  />
+) : (
+  <Image
+    src={image}
+    alt={altZh}
+    data-locale-alt-zh={altZh}
+    data-locale-alt-en={altEn}
+    {...getAlbumImageOptions(image, preset)}
+    {...attributes}
+    {...viewerAttributes}
+  />
+)}

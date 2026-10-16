@@ -3,7 +3,6 @@ import JourneyTimeline from '../components/JourneyTimeline.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { SITE_CONFIG } from '../config/site.js';
 import { COPY } from '../i18n/copy.js';
-import LocalizedText from '../components/LocalizedText.astro';
 import '../styles/journey-timeline.css';
 ---
 <SiteLayout
@@ -11,8 +10,7 @@ import '../styles/journey-timeline.css';
   description={{ zh: '浏览林岚和周屿这份虚构示例中的关系阶段和共同记忆。', en: 'Explore the fictional relationship milestones and memories of Lin Lan and Zhou Yu.' }}
   current="journey"
 >
-  <a class="skip-link" href="#journey-title" aria-label="跳到时间线" data-locale-aria-label-zh="跳到时间线" data-locale-aria-label-en="Skip to timeline"><LocalizedText value={{ zh: '跳到时间线', en: 'Skip to timeline' }} /></a>
-  <main class="journey-shell">
+  <main class="journey-shell" id="main-content" tabindex="-1">
     <JourneyTimeline />
   </main>
 </SiteLayout>
